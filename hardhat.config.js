@@ -1,0 +1,15 @@
+require("@nomicfoundation/hardhat-toolbox");
+require("hardhat-tracer");
+// require( "./tasks/deploy");
+/** @type import('hardhat/config').HardhatUserConfig */
+module.exports = {
+  solidity: {
+    version: "0.8.13",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200,
+      },
+    },
+  },
+};
