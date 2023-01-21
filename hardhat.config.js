@@ -1,6 +1,10 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("hardhat-tracer");
 require("dotenv").config();
+require("@typechain/hardhat");
+require("hardhat-abi-exporter");
+require("hardhat-contract-sizer");
+require("hardhat-gas-reporter");
 // require( "./tasks/deploy");
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -41,6 +45,23 @@ module.exports = {
         `${process.env.PRIVATE_KEY5}`,
       ],
     },
+  },
+  contractSizer: {
+    alphaSort: true,
+    runOnCompile: true,
+    disambiguatePaths: false,
+    strict: true,
+    only: [],
+    except: [],
+  },
+  abiExporter: {
+    path: "./abis",
+    runOnCompile: true,
+    clear: true,
+    flat: false,
+    only: [],
+    spacing: 2,
+    pretty: true,
   },
   etherscan: {
     apiKey: {
