@@ -3,6 +3,10 @@
 //
 // You can also run a script with `npx hardhat run <script>`. If you do that, Hardhat
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
+
+import { ethers } from "hardhat";
+import { Velo,GaugeFactory, RewardsDistributor, VotingEscrow, PairFactory, BribeFactory, VeArtProxy, Voter, Minter } from "../types";
+
 // global scope, and execute the script.
 const hre = require("hardhat");
 const path = require('path');
@@ -138,33 +142,33 @@ async function main() {
   ]);
 
   // deploying VELO
-  const velo = await _deploy("Velo", null);
+  const velo = await _deploy("Velo", null) as Velo;
   console.log("Velo deployed to: ", velo.address);
-
+  
   // deploying GaugeFactory
-  const gaugeFactory = await _deploy("GaugeFactory", null); // creates gauges (distributes rewards to Liq pools)
+  const gaugeFactory = await _deploy("GaugeFactory", null) as GaugeFactory // creates gauges (distributes rewards to Liq pools)
   console.log("GaugeFactory deployed to: ", gaugeFactory.address);
 
   // deploying bribeFactory
-  const bribeFactory = await _deploy("BribeFactory", null);
+  const bribeFactory = await _deploy("BribeFactory", null) as BribeFactory;
   console.log("BribeFactory deployed to: ", bribeFactory.address);
 
   // deploying pairFactory
-  const pairFactory = await _deploy("PairFactory", null);
+  const pairFactory = await _deploy("PairFactory", null) as PairFactory;
   console.log("PairFactory deployed to: ", pairFactory.address);
 
   // deploying art Proxy
-  const artProxy = await _deploy("VeArtProxy", null);
+  const artProxy = await _deploy("VeArtProxy", null) as VeArtProxy;
   console.log("VeArtProxy deployed to: ", artProxy.address);
 
   // deploying Voting Escro
-  const escrow = await _deploy("VotingEscrow", velo.address, artProxy.address);
+  const escrow = await _deploy("VotingEscrow", velo.address, artProxy.address) as VotingEscrow;
   console.log("VotingEscrow deployed to: ", escrow.address);
   console.log("Args: ", velo.address, artProxy.address, "\n");
 
   // now deploying reward distribution
 
-  const distributor = await _deploy("RewardsDistributor", escrow.address);
+  const distributor = await _deploy("RewardsDistributor", escrow.address) as RewardsDistributor;
   console.log("RewardsDistributor deployed to: ", distributor.address);
   console.log("Args: ", escrow.address, "\n");
 
@@ -173,7 +177,7 @@ async function main() {
     pairFactory.address,
     gaugeFactory.address,
     bribeFactory.address
-  );
+  ) as Voter;
 
   console.log("Voter deployed to: ", voter.address);
   console.log(
@@ -190,7 +194,7 @@ async function main() {
     voter.address,
     escrow.address,
     distributor.address
-  );
+  ) as Minter;
 
   console.log("Minter deployed to: ", minter.address);
   console.log(

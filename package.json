@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build":"yarn compile && yarn typings",
+    "compile":"hardhat compile",
+    "typings":"typechain --target ethers-v5 --out-dir types abis/**/*.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

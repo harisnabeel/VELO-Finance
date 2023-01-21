@@ -58,10 +58,9 @@ module.exports = {
     path: "./abis",
     runOnCompile: true,
     clear: true,
-    flat: false,
+    flat: true,
     only: [],
     spacing: 2,
-    pretty: true,
   },
   etherscan: {
     apiKey: {
