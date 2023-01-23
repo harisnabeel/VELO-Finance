@@ -6,11 +6,10 @@
 
 import { ethers } from "hardhat";
 import { Velo,GaugeFactory, RewardsDistributor, VotingEscrow, PairFactory, BribeFactory, VeArtProxy, Voter, Minter } from "../types";
-
+import {createHash} from 'crypto'
 // global scope, and execute the script.
 const hre = require("hardhat");
-const path = require('path');
-const fs = require('fs');
+
 const {
   verifyContract
 } = require("./utils/verfierHelper");
@@ -20,62 +19,19 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 import * as tdr from "truffle-deploy-registry";
 
 
-async function readJsonFromFile(filePath){
-  return JSON.parse(fs.readFileSync(filePath, {encoding:'utf-8'}));
-}
 
-async function addToTvr(
-  address,
-  args,
-  network,
-  networkId,
-) {
-  // Adds in constructor args for contracts in the k, v store
-  // e.g. Produces a networks/1_args.json
-  // with the structure
-  // { "address": "args" }
-  if (network && network !== 'hardhat') {
-    const tvrPath = path.join(
-      process.cwd(),
-      'networks',
-      `${networkId}_args.json`,
-    );
-    
-
-    let tvrData = {};
-
-    // If file exists, just read it
-    if (fs.existsSync(tvrPath)) {
-      tvrData = (await readJsonFromFile(tvrPath));
-    }
-
-    // Remove { 'from': ... } thats present in the deployment args
-    // As well as empty objects
-    // And destructure the single tuple (with rawValue keys)
-    const argsFixed = args
-      .filter(
-        (x) =>
-          !x.from && (typeof x === 'object' ? Object.keys(x).length > 0 : true),
-      )
-      .map((x) => {
-        // Tuple
-        if (x.rawValue) return [x.rawValue];
-        return x;
-      });
-
-    // Save to file
-    fs.writeFileSync(
-      tvrPath,
-      JSON.stringify({ ...tvrData, [address]: argsFixed }, null, 4),
-    );
-  }
-}
 
 async function getExistingContract(contractName) {
   const Contract = await ethers.getContractFactory(contractName);
+  
   const entry = await tdr.findLastByContractName(hre.network.config.chainId, contractName);
   if (entry) {
-    return new ethers.Contract(entry.address, Contract.interface)
+    const hash = entry.byteCodeMd5;
+    if(hash === createHash('md5').update(Contract.bytecode).digest("hex")){
+      return new ethers.Contract(entry.address, Contract.interface)
+    }
+    return null
+    
   }
 }
 async function _deploy(contractName, ...args) {
@@ -100,7 +56,7 @@ async function _deploy(contractName, ...args) {
   } else {
     console.log("New Deployment wtith Args >", contractName,args)
     contract = await Contract.deploy(...args);
-    //await addToTvr(contract.address,args,network,contract.deployTransaction.chainId)
+    
   }
 
   await contract.deployed();
@@ -120,6 +76,7 @@ async function _deploy(contractName, ...args) {
     contractName: contractName,
     address: contract.address,
     transactionHash: contract.deployTransaction.hash,
+    byteCodeMd5: createHash('md5').update(Contract.bytecode).digest("hex"),
     args,
   });
   return contract;
@@ -153,6 +110,7 @@ async function main() {
   // deploying VELO
   const velo = await _deploy("Velo", null) as Velo;
   console.log("Velo deployed to: ", velo.address);
+  return;
 
   // deploying GaugeFactory
   const gaugeFactory = await _deploy("GaugeFactory", null) as GaugeFactory // creates gauges (distributes rewards to Liq pools)
@@ -180,7 +138,6 @@ async function main() {
   const distributor = await _deploy("RewardsDistributor", escrow.address) as RewardsDistributor;
   console.log("RewardsDistributor deployed to: ", distributor.address);
   console.log("Args: ", escrow.address, "\n");
-  await verifyContract(distributor.address, [escrow.address]);
 
   // deploying voter
   const voter = await _deploy("Voter", escrow.address,
@@ -189,11 +146,6 @@ async function main() {
     bribeFactory.address
   ) as Voter;
 
-  await verifyContract(voter.address, [escrow.address,
-    pairFactory.address,
-    gaugeFactory.address,
-    bribeFactory.address
-  ]);
 
 
   console.log("Voter deployed to: ", voter.address);
@@ -213,9 +165,7 @@ async function main() {
     distributor.address
   ) as Minter;
 
-  await verifyContract(minter.address, [  voter.address,
-    escrow.address,
-    distributor.address]);
+
   console.log("Minter deployed to: ", minter.address);
   console.log(
     "Args: ",

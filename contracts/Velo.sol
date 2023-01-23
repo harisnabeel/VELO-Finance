@@ -42,7 +42,7 @@ contract Velo is IVelo {
     function initialMint(address _recipient) external {
         require(msg.sender == minter && !initialMinted);
         initialMinted = true;
-        _mint(_recipient, 10 * 1e6 * 1e18);
+        _mint(_recipient, 100 * 1e6 * 1e18);
     }
 
     function approve(address _spender, uint256 _value) external returns (bool) {
