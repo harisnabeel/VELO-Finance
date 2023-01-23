@@ -7,6 +7,8 @@ import {IERC721Receiver} from "@openzeppelin/contracts/token/ERC721/IERC721Recei
 import {IERC20} from "./interfaces/IERC20.sol";
 import {IVeArtProxy} from "./interfaces/IVeArtProxy.sol";
 import {IVotingEscrow} from "./interfaces/IVotingEscrow.sol";
+import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+
 import "hardhat/console.sol";
 
 /// @title Voting Escrow
@@ -91,6 +93,10 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
 
     /// @dev Current count of token
     uint256 internal tokenId;
+
+    using EnumerableSet for EnumerableSet.UintSet;
+
+    EnumerableSet.UintSet private mySet;
 
     /// @notice Contract constructor
     /// @param token_addr `VELO` token address
@@ -652,7 +658,10 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
             }
             if (new_locked.end > block.timestamp && new_locked.amount > 0) {
                 console.log("+1+1+1+1+2");
-                
+                 console.logInt(new_locked.amount);
+                console.log("new_locked.amount");
+                console.logInt(iMAXTIME);
+                console.log("iMAXTIME");
                 u_new.slope = new_locked.amount / iMAXTIME;
                
                 u_new.bias =
@@ -660,13 +669,13 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
                     int128(int256(new_locked.end - block.timestamp));
                 console.logInt(u_new.slope);
                 console.log("u_new.slope");
-
+                console.log(block.timestamp,"block.timestamp");
+                console.log(new_locked.end,"new_locked.end");
+                
+                console.logInt(int128(int256(new_locked.end - block.timestamp)));
+                console.log("int128(int256(new_locked.end - block.timestamp))");
                 console.logInt(u_new.bias);
                 console.log("u_new.bias");
-                console.log(new_locked.end, "new_locked.end");
-                console.log(block.timestamp, "block.timestamp");
-                console.logInt(u_new.slope);
-                console.log("u_new.slope after");
             }
 
             // Read values of scheduled changes in the slope
@@ -771,18 +780,11 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
         // Now point_history is filled until t=now
 
         if (_tokenId != 0) {
+            console.log("1+1+1+1+1+3");
             // If last point was in this block, the slope change has been applied already
             // But in such case we have 0 slope(s)
             last_point.slope += (u_new.slope - u_old.slope);
             last_point.bias += (u_new.bias - u_old.bias);
-            console.logInt(u_new.slope);
-            console.log("u_new.slope ");
-            console.logInt(u_old.slope);
-            console.log("u_old.slope ");
-            console.logInt(u_new.bias);
-            console.log("u_new.bias ");
-            console.logInt(u_old.bias);
-            console.log("u_old.bias ");
             if (last_point.slope < 0) {
                 last_point.slope = 0;
             }
@@ -831,7 +833,11 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
             }
             // Now handle user history
             uint256 user_epoch = user_point_epoch[_tokenId] + 1;
+console.logInt(u_new.slope);
+                console.log("u_new.slope");
 
+                console.logInt(u_new.bias);
+                console.log("u_new.bias");
             user_point_epoch[_tokenId] = user_epoch;
             u_new.ts = block.timestamp;
             u_new.blk = block.number;
@@ -865,7 +871,7 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
             _locked.end = unlock_time;
         }
         locked[_tokenId] = _locked;
-
+        console.log(unlock_time,"unlock_time");
         // Possibilities:
         // Both old_locked.end could be current or expired (>/< block.timestamp)
         // value == 0 (extend lock) or value > 0 (add to lock or extend lock)
@@ -932,9 +938,10 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
         uint256 _lock_duration,
         address _to
     ) internal returns (uint256) {
+
         uint256 unlock_time = ((block.timestamp + _lock_duration) / WEEK) *
             WEEK; // Locktime is rounded down to weeks
-
+        console.log(unlock_time);
         require(_value > 0); // dev: need non-zero value
         require(
             unlock_time > block.timestamp,

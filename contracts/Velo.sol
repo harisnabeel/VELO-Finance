@@ -4,8 +4,8 @@ pragma solidity 0.8.13;
 import "contracts/interfaces/IVelo.sol";
 
 contract Velo is IVelo {
-    string public constant name = "Velodrome";
-    string public constant symbol = "VELO";
+    string public constant name = "0xEquity";
+    string public constant symbol = "XEQ";
     uint8 public constant decimals = 18;
     uint256 public totalSupply = 0;
 
@@ -26,7 +26,7 @@ contract Velo is IVelo {
 
     constructor() {
         minter = msg.sender;
-        _mint(msg.sender, 1000000 * (10 ** 18));
+        _mint(msg.sender, 10000000 * (10 ** 18));
     }
 
     // No checks as its meant to be once off to set minting rights to BaseV1 Minter
@@ -42,7 +42,7 @@ contract Velo is IVelo {
     function initialMint(address _recipient) external {
         require(msg.sender == minter && !initialMinted);
         initialMinted = true;
-        _mint(_recipient, 82 * 1e6 * 1e18);
+        _mint(_recipient, 10 * 1e6 * 1e18);
     }
 
     function approve(address _spender, uint256 _value) external returns (bool) {

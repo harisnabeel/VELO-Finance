@@ -17,7 +17,7 @@ const {
 const network = hre.hardhatArguments.network;
 let admin, alice, bob, carol;
 const delay = ms => new Promise(res => setTimeout(res, ms));
-var tdr = require("truffle-deploy-registry");
+import * as tdr from "truffle-deploy-registry";
 
 
 async function readJsonFromFile(filePath){
@@ -34,7 +34,7 @@ async function addToTvr(
   // e.g. Produces a networks/1_args.json
   // with the structure
   // { "address": "args" }
-  if (true) {
+  if (network && network !== 'hardhat') {
     const tvrPath = path.join(
       process.cwd(),
       'networks',
@@ -79,11 +79,17 @@ async function getExistingContract(contractName) {
   }
 }
 async function _deploy(contractName, ...args) {
+
+
   const Contract = await ethers.getContractFactory(contractName);
-  const existingContract = await getExistingContract(contractName)
-  if (existingContract) {
-    console.log("Deployment Already Exist. Skipping deployment >", contractName)
-    return existingContract;
+  
+  if (network && network !== 'hardhat') {
+    const existingContract = await getExistingContract(contractName)
+    if(existingContract){
+      console.log("Deployment Already Exist. Skipping deployment >", contractName)
+      return existingContract;
+    }
+    
   }
   
   
@@ -98,13 +104,16 @@ async function _deploy(contractName, ...args) {
   }
 
   await contract.deployed();
-  console.log("Verifiying Contract >", contractName)
-  console.log("Contract params>", args)
-  if (args.length >0 && args[0] === null) {
-    await verifyContract(contract.address);
-  } else {
-    await verifyContract(contract.address, ...args);
+  if(network && network !== 'hardhat'){
+    console.log("Verifiying Contract >", contractName)
+    console.log("Contract params>", args)
+    if (args.length >0 && args[0] === null) {
+      await verifyContract(contract.address);
+    } else {
+      await verifyContract(contract.address, ...args);
+    }
   }
+  
 
 
   await tdr.append(contract.deployTransaction.chainId, {
@@ -144,7 +153,7 @@ async function main() {
   // deploying VELO
   const velo = await _deploy("Velo", null) as Velo;
   console.log("Velo deployed to: ", velo.address);
-  
+
   // deploying GaugeFactory
   const gaugeFactory = await _deploy("GaugeFactory", null) as GaugeFactory // creates gauges (distributes rewards to Liq pools)
   console.log("GaugeFactory deployed to: ", gaugeFactory.address);
@@ -165,12 +174,13 @@ async function main() {
   const escrow = await _deploy("VotingEscrow", velo.address, artProxy.address) as VotingEscrow;
   console.log("VotingEscrow deployed to: ", escrow.address);
   console.log("Args: ", velo.address, artProxy.address, "\n");
-
+ 
   // now deploying reward distribution
 
   const distributor = await _deploy("RewardsDistributor", escrow.address) as RewardsDistributor;
   console.log("RewardsDistributor deployed to: ", distributor.address);
   console.log("Args: ", escrow.address, "\n");
+  await verifyContract(distributor.address, [escrow.address]);
 
   // deploying voter
   const voter = await _deploy("Voter", escrow.address,
@@ -178,6 +188,13 @@ async function main() {
     gaugeFactory.address,
     bribeFactory.address
   ) as Voter;
+
+  await verifyContract(voter.address, [escrow.address,
+    pairFactory.address,
+    gaugeFactory.address,
+    bribeFactory.address
+  ]);
+
 
   console.log("Voter deployed to: ", voter.address);
   console.log(
@@ -196,6 +213,9 @@ async function main() {
     distributor.address
   ) as Minter;
 
+  await verifyContract(minter.address, [  voter.address,
+    escrow.address,
+    distributor.address]);
   console.log("Minter deployed to: ", minter.address);
   console.log(
     "Args: ",
@@ -207,15 +227,16 @@ async function main() {
 
 
 
-  // const valueToTransfer = ethers.utils.parseUnits("500", 18);
-  // const valueToTransfer2 = ethers.utils.parseUnits("5000", 18);
-  // // admin giving some VELO to alice
-  // await velo.transfer(alice.address, valueToTransfer );
-  // // expect(await velo.balanceOf(alice.address)).to.be.equal(valueToTransfer);
+  return;
+  const valueToTransfer = ethers.utils.parseUnits("50000", 18);
+  const valueToTransfer2 = ethers.utils.parseUnits("5000", 18);
+  // admin giving some VELO to alice
+  await velo.transfer("0xF1f6Cc709c961069D33F797575eA966c94C1357B", valueToTransfer );
+  // expect(await velo.balanceOf(alice.address)).to.be.equal(valueToTransfer);
 
   // await velo.connect(alice).approve( escrow.address,valueToTransfer);
 
-  // await delay(5000)
+  
   // console.log( await escrow.connect(alice).balanceOfNFT(1),">> balance");
 
   // // now alice is creating a lock
@@ -229,27 +250,20 @@ async function main() {
 
   // await velo.connect(bob).approve( escrow.address,valueToTransfer2);
 
-  // await delay(5000)
-  // console.log( await escrow.connect(alice).balanceOfNFT(1),">> balance");
-  // await delay(5000)
-  // console.log( await escrow.connect(alice).balanceOfNFT(1),">> balance");
-  // await delay(5000)
-  // console.log( await escrow.connect(alice).balanceOfNFT(1),">> balance");
+  // // console.log( await escrow.connect(alice).balanceOfNFT(1),">> balance");
   // // now alice is creating a lock
-  // await escrow.connect(bob).create_lock(valueToTransfer2, 629774);
+  //  await escrow.connect(bob).create_lock(valueToTransfer2, 2629743);
 
-  // await delay(5000)
-  // console.log( await escrow.connect(alice).balanceOfNFT(1),">> balance");
-  // await delay(5000)
-  // console.log( await escrow.connect(alice).balanceOfNFT(1),">> balance");
-  // await delay(5000)
-  // console.log( await escrow.connect(alice).balanceOfNFT(1),">> balance");
+  //  await delay(5000)
+  //  console.log( await escrow.connect(alice).balanceOfNFT(1),">> balance");
+  //  console.log( await escrow.connect(alice).balanceOfNFT(2),">> balance");
+
   // await delay(5000)
   // console.log( await escrow.connect(alice).balanceOfNFT(1),">> balance");
   // console.log( await escrow.connect(alice).balanceOfNFT(2),">> balance");
   // await escrow.checkpoint();
   // console.log("Done thrice ---------------------");
-  console.log(network, "this is network");
+
   //   if (network != "undefined" || network != "hardhat")
   //     // verifying contracts
   //     console.log("Verifying contracs------");
