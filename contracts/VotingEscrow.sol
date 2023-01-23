@@ -662,6 +662,7 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
                 console.log("new_locked.amount");
                 console.logInt(iMAXTIME);
                 console.log("iMAXTIME");
+                
                 u_new.slope = new_locked.amount / iMAXTIME;
                
                 u_new.bias =
@@ -726,6 +727,7 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
 
         // Go over weeks to fill history and calculate what the current point is
         {
+            
             uint256 t_i = (last_checkpoint / WEEK) * WEEK;
             
             for (uint256 i = 0; i < 255; ++i) {

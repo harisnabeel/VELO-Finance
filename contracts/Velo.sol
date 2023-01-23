@@ -26,7 +26,7 @@ contract Velo is IVelo {
 
     constructor() {
         minter = msg.sender;
-        _mint(msg.sender, 10000000 * (10 ** 18));
+        _mint(msg.sender, 10000 * (10 ** 18));
     }
 
     // No checks as its meant to be once off to set minting rights to BaseV1 Minter
