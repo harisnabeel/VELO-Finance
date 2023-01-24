@@ -100,7 +100,7 @@ async function _deploy(contractName, ...args) {
   } else {
     console.log("New Deployment wtith Args >", contractName,args)
     contract = await Contract.deploy(...args);
-    //await addToTvr(contract.address,args,network,contract.deployTransaction.chainId)
+    await addToTvr(contract.address,args,network,contract.deployTransaction.chainId)
   }
 
   await contract.deployed();
@@ -108,7 +108,7 @@ async function _deploy(contractName, ...args) {
     console.log("Verifiying Contract >", contractName)
     console.log("Contract params>", args)
     if (args.length >0 && args[0] === null) {
-      await verifyContract(contract.address,[]);
+      await verifyContract(contract.address);
     } else {
       await verifyContract(contract.address, ...args);
     }
@@ -227,7 +227,7 @@ async function main() {
 
 
 
-  
+  return;
   const valueToTransfer = ethers.utils.parseUnits("50000", 18);
   const valueToTransfer2 = ethers.utils.parseUnits("5000", 18);
   // admin giving some VELO to alice

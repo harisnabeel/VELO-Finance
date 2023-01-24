@@ -1402,5 +1402,83 @@
       "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
       "0x0165878A594ca255338adfa4d48449f69242Eb8F"
     ]
+  },
+  {
+    "contractName": "Velo",
+    "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+    "transactionHash": "0x490c6f702911900d5fc8854a7def71dad5a3fc7fede7e57b5779419f21b0512a",
+    "args": [
+      null
+    ]
+  },
+  {
+    "contractName": "GaugeFactory",
+    "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+    "transactionHash": "0xb7e6c817864a228e1e9588a3f2d5de098eabc4094393e6209f15b2f87af91b27",
+    "args": [
+      null
+    ]
+  },
+  {
+    "contractName": "BribeFactory",
+    "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+    "transactionHash": "0x57089051c3e34d61e654e6c788cc8b0e536edde56de1de677dee18a75c6b5dc0",
+    "args": [
+      null
+    ]
+  },
+  {
+    "contractName": "PairFactory",
+    "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+    "transactionHash": "0x8b8e144bb95ebec8ab79324348a737960cc89d53e1305171f7c8dcae4146adbb",
+    "args": [
+      null
+    ]
+  },
+  {
+    "contractName": "VeArtProxy",
+    "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+    "transactionHash": "0xb9d47dbfb9bcd96939be51d5acdd2f0f70b98b2ed0f58fedb373a88e2f3dd3b2",
+    "args": [
+      null
+    ]
+  },
+  {
+    "contractName": "VotingEscrow",
+    "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+    "transactionHash": "0xf053a0cb78d718e17e28e840717e599c5d5a21993ada76e619a567fc22b97cd3",
+    "args": [
+      "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9"
+    ]
+  },
+  {
+    "contractName": "RewardsDistributor",
+    "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
+    "transactionHash": "0xd1a941b9d94ba976c9fa8f62bff633991bedcc311b35ce36e59ebac3b21135a8",
+    "args": [
+      "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707"
+    ]
+  },
+  {
+    "contractName": "Voter",
+    "address": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+    "transactionHash": "0x03313f50f5437a4dc56c12cbadfaf1a827694e126d51d6c4eb26d2e6a3740ae7",
+    "args": [
+      "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+      "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+      "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
+    ]
+  },
+  {
+    "contractName": "Minter",
+    "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+    "transactionHash": "0xbac070c4926a9dbe9845d567de07f30ede861c6528e7d2584ec7c894ad34d101",
+    "args": [
+      "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+      "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+      "0x0165878A594ca255338adfa4d48449f69242Eb8F"
+    ]
   }
 ]

@@ -638,10 +638,9 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
             // Kept at zero when they have to
             if (old_locked.end > block.timestamp && old_locked.amount > 0) {
                 console.log("+1+1+1+1+1");
-                
 
                 u_old.slope = old_locked.amount / iMAXTIME;
-               
+
                 u_old.bias =
                     u_old.slope *
                     int128(int256(old_locked.end - block.timestamp));
@@ -658,22 +657,24 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
             }
             if (new_locked.end > block.timestamp && new_locked.amount > 0) {
                 console.log("+1+1+1+1+2");
-                 console.logInt(new_locked.amount);
+                console.logInt(new_locked.amount);
                 console.log("new_locked.amount");
                 console.logInt(iMAXTIME);
                 console.log("iMAXTIME");
-                
+
                 u_new.slope = new_locked.amount / iMAXTIME;
-               
+
                 u_new.bias =
                     u_new.slope *
                     int128(int256(new_locked.end - block.timestamp));
                 console.logInt(u_new.slope);
                 console.log("u_new.slope");
-                console.log(block.timestamp,"block.timestamp");
-                console.log(new_locked.end,"new_locked.end");
-                
-                console.logInt(int128(int256(new_locked.end - block.timestamp)));
+                console.log(block.timestamp, "block.timestamp");
+                console.log(new_locked.end, "new_locked.end");
+
+                console.logInt(
+                    int128(int256(new_locked.end - block.timestamp))
+                );
                 console.log("int128(int256(new_locked.end - block.timestamp))");
                 console.logInt(u_new.bias);
                 console.log("u_new.bias");
@@ -683,16 +684,13 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
             // old_locked.end can be in the past and in the future
             // new_locked.end can ONLY by in the FUTURE unless everything expired: than zeros
             old_dslope = slope_changes[old_locked.end];
-            
-    
+
             if (new_locked.end != 0) {
                 if (new_locked.end == old_locked.end) {
                     new_dslope = old_dslope;
                 } else {
                     new_dslope = slope_changes[new_locked.end];
                 }
-
-                
             }
         }
         console.logInt(old_dslope);
@@ -720,21 +718,23 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
             block_slope =
                 (MULTIPLIER * (block.number - last_point.blk)) /
                 (block.timestamp - last_point.ts);
-            console.log(block_slope, "block_slope is the difference in current and previous time");
+            console.log(
+                block_slope,
+                "block_slope is the difference in current and previous time"
+            );
         }
         // If last point is already recorded in this block, slope=0
         // But that's ok b/c we know the block in such case
 
         // Go over weeks to fill history and calculate what the current point is
         {
-            
             uint256 t_i = (last_checkpoint / WEEK) * WEEK;
-            
+
             for (uint256 i = 0; i < 255; ++i) {
                 // Hopefully it won't happen that this won't get used in 5 years!
                 // If it does, users will be able to withdraw but vote weight will be broken
                 t_i += WEEK;
-                
+
                 int128 d_slope = 0;
                 if (t_i > block.timestamp) {
                     console.log("Reset the time to blockstamp");
@@ -806,7 +806,7 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
             // and add old_user_slope to [old_locked.end]
             if (old_locked.end > block.timestamp) {
                 // old_dslope was <something> - u_old.slope, so we cancel that
-                 console.logInt(old_dslope);
+                console.logInt(old_dslope);
                 console.log("old_dslope before");
                 old_dslope += u_old.slope;
 
@@ -835,11 +835,11 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
             }
             // Now handle user history
             uint256 user_epoch = user_point_epoch[_tokenId] + 1;
-console.logInt(u_new.slope);
-                console.log("u_new.slope");
+            console.logInt(u_new.slope);
+            console.log("u_new.slope");
 
-                console.logInt(u_new.bias);
-                console.log("u_new.bias");
+            console.logInt(u_new.bias);
+            console.log("u_new.bias");
             user_point_epoch[_tokenId] = user_epoch;
             u_new.ts = block.timestamp;
             u_new.blk = block.number;
@@ -873,7 +873,7 @@ console.logInt(u_new.slope);
             _locked.end = unlock_time;
         }
         locked[_tokenId] = _locked;
-        console.log(unlock_time,"unlock_time");
+        console.log(unlock_time, "unlock_time");
         // Possibilities:
         // Both old_locked.end could be current or expired (>/< block.timestamp)
         // value == 0 (extend lock) or value > 0 (add to lock or extend lock)
@@ -940,9 +940,10 @@ console.logInt(u_new.slope);
         uint256 _lock_duration,
         address _to
     ) internal returns (uint256) {
-
         uint256 unlock_time = ((block.timestamp + _lock_duration) / WEEK) *
             WEEK; // Locktime is rounded down to weeks
+        // console.log(WEEK, "SEC in week");
+        // console.log(((1674381698 + 644304) / (WEEK)) * WEEK, "This is calc");
         console.log(unlock_time);
         require(_value > 0); // dev: need non-zero value
         require(

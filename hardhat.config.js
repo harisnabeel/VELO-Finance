@@ -2,7 +2,7 @@ require("@nomicfoundation/hardhat-toolbox");
 require("hardhat-tracer");
 require("dotenv").config();
 require("@typechain/hardhat");
-require("hardhat-abi-exporter");
+// require("hardhat-abi-exporter");
 require("hardhat-contract-sizer");
 require("hardhat-gas-reporter");
 // require( "./tasks/deploy");
