@@ -346,6 +346,20 @@ describe("VELO", function () {
     );
   }
 
+  async function distributeUsdc() {
+    const valueToTransfer = ethers.utils.parseUnits("100000", 18);
+    await usdc.transfer(alice.address, valueToTransfer);
+    await usdc.transfer(bob.address, valueToTransfer);
+    await usdc.transfer(carol.address, valueToTransfer);
+    await usdc.transfer(teamMultisig.address, valueToTransfer);
+    await usdc.transfer(asim1.address, valueToTransfer);
+    await usdc.transfer(asim2.address, valueToTransfer);
+
+    console.log(
+      "END OF USDC DISTRIBUTION -----------------------------------------------------"
+    );
+  }
+
   async function createLockForUser(amount, duration, signer) {
     await velo.approve(escrow.address, amount);
     await escrow.connect(signer).create_lock(amount, duration);
@@ -355,10 +369,16 @@ describe("VELO", function () {
   async function addLiquidityForUser(signer, deadline) {
     await velo
       .connect(signer)
-      .approve(router.address, ethers.utils.parseUnits("1000000000000000000", 18));
+      .approve(
+        router.address,
+        ethers.utils.parseUnits("1000000000000000000", 18)
+      );
     await usdc
       .connect(signer)
-      .approve(router.address, ethers.utils.parseUnits("10000000000000000000", 18));
+      .approve(
+        router.address,
+        ethers.utils.parseUnits("10000000000000000000", 18)
+      );
     // addinng liquiduty
     await router
       .connect(signer)
@@ -549,6 +569,7 @@ describe("VELO", function () {
         await printUserVeloBalances();
         await printUserNFTBalances();
         await distributeVelo();
+        await distributeUsdc();
         await printUserVeloBalances();
       });
 
