@@ -629,7 +629,7 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
         int128 old_dslope = 0;
         int128 new_dslope = 0;
         uint256 _epoch = epoch;
-        console.log(_tokenId, "_tokenId");
+        // console.log(_tokenId, "_tokenId");
         // console.log(old_locked,"old_locked");
         // console.log(new_locked,"new_locked");
 
@@ -637,7 +637,7 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
             // Calculate slopes and biases
             // Kept at zero when they have to
             if (old_locked.end > block.timestamp && old_locked.amount > 0) {
-                console.log("+1+1+1+1+1");
+                // console.log("+1+1+1+1+1");
 
                 u_old.slope = old_locked.amount / iMAXTIME;
 
@@ -645,39 +645,39 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
                     u_old.slope *
                     int128(int256(old_locked.end - block.timestamp));
 
-                console.logInt(u_old.slope);
-                console.log("Slope after");
-                console.logInt(u_old.bias);
-                console.log("u_old.bias before");
+                // console.logInt(u_old.slope);
+                // console.log("Slope after");
+                // console.logInt(u_old.bias);
+                // console.log("u_old.bias before");
 
-                console.log(old_locked.end, "old_locked.end");
-                console.log(block.timestamp, "block.timestamp");
-                console.logInt(u_old.bias);
-                console.log("u_old.bias afte");
+                // console.log(old_locked.end, "old_locked.end");
+                // console.log(block.timestamp, "block.timestamp");
+                // console.logInt(u_old.bias);
+                // console.log("u_old.bias afte");
             }
             if (new_locked.end > block.timestamp && new_locked.amount > 0) {
-                console.log("+1+1+1+1+2");
-                console.logInt(new_locked.amount);
-                console.log("new_locked.amount");
-                console.logInt(iMAXTIME);
-                console.log("iMAXTIME");
+                // console.log("+1+1+1+1+2");
+                // console.logInt(new_locked.amount);
+                // console.log("new_locked.amount");
+                // console.logInt(iMAXTIME);
+                // console.log("iMAXTIME");
 
                 u_new.slope = new_locked.amount / iMAXTIME;
 
                 u_new.bias =
                     u_new.slope *
                     int128(int256(new_locked.end - block.timestamp));
-                console.logInt(u_new.slope);
-                console.log("u_new.slope");
-                console.log(block.timestamp, "block.timestamp");
-                console.log(new_locked.end, "new_locked.end");
+                // console.logInt(u_new.slope);
+                // console.log("u_new.slope");
+                // console.log(block.timestamp, "block.timestamp");
+                // console.log(new_locked.end, "new_locked.end");
 
-                console.logInt(
-                    int128(int256(new_locked.end - block.timestamp))
-                );
-                console.log("int128(int256(new_locked.end - block.timestamp))");
-                console.logInt(u_new.bias);
-                console.log("u_new.bias");
+                // console.logInt(
+                //     int128(int256(new_locked.end - block.timestamp))
+                // );
+                // console.log("int128(int256(new_locked.end - block.timestamp))");
+                // console.logInt(u_new.bias);
+                // console.log("u_new.bias");
             }
 
             // Read values of scheduled changes in the slope
@@ -693,10 +693,10 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
                 }
             }
         }
-        console.logInt(old_dslope);
-        console.log("old_dslope");
-        console.logInt(new_dslope);
-        console.log("new_dslope");
+        // console.logInt(old_dslope);
+        // console.log("old_dslope");
+        // console.logInt(new_dslope);
+        // console.log("new_dslope");
 
         Point memory last_point = Point({
             bias: 0,
@@ -714,14 +714,14 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
         Point memory initial_last_point = last_point;
         uint256 block_slope = 0; // dblock/dt
         if (block.timestamp > last_point.ts) {
-            console.log("Block time is bigger than lastPoint Timestamp");
+            // console.log("Block time is bigger than lastPoint Timestamp");
             block_slope =
                 (MULTIPLIER * (block.number - last_point.blk)) /
                 (block.timestamp - last_point.ts);
-            console.log(
-                block_slope,
-                "block_slope is the difference in current and previous time"
-            );
+            // console.log(
+            //     block_slope,
+            //     "block_slope is the difference in current and previous time"
+            // );
         }
         // If last point is already recorded in this block, slope=0
         // But that's ok b/c we know the block in such case
@@ -737,18 +737,18 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
 
                 int128 d_slope = 0;
                 if (t_i > block.timestamp) {
-                    console.log("Reset the time to blockstamp");
+                    // console.log("Reset the time to blockstamp");
                     t_i = block.timestamp;
                 } else {
                     d_slope = slope_changes[t_i];
                 }
-                console.logInt(d_slope);
-                console.log("d_slope");
+                // console.logInt(d_slope);
+                // console.log("d_slope");
                 last_point.bias -=
                     last_point.slope *
                     int128(int256(t_i - last_checkpoint));
-                console.logInt(last_point.bias);
-                console.log("last_point.bias");
+                // console.logInt(last_point.bias);
+                // console.log("last_point.bias");
                 last_point.slope += d_slope;
                 if (last_point.bias < 0) {
                     // This can happen
@@ -760,7 +760,7 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
                 }
                 last_checkpoint = t_i;
                 last_point.ts = t_i;
-                console.log(last_point.blk, "last_point.blk");
+                // console.log(last_point.blk, "last_point.blk");
 
                 last_point.blk =
                     initial_last_point.blk +
@@ -773,16 +773,16 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
                 } else {
                     point_history[_epoch] = last_point;
                 }
-                console.log(last_point.blk, "last_point.blk");
+                // console.log(last_point.blk, "last_point.blk");
             }
         }
 
         epoch = _epoch;
-        console.log(epoch, "epoch");
+        // console.log(epoch, "epoch");
         // Now point_history is filled until t=now
 
         if (_tokenId != 0) {
-            console.log("1+1+1+1+1+3");
+            // console.log("1+1+1+1+1+3");
             // If last point was in this block, the slope change has been applied already
             // But in such case we have 0 slope(s)
             last_point.slope += (u_new.slope - u_old.slope);
@@ -794,8 +794,8 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
                 last_point.bias = 0;
             }
         }
-        console.logInt(last_point.slope);
-        console.log("last_point.slope");
+        // console.logInt(last_point.slope);
+        // console.log("last_point.slope");
 
         // Record the changed point into history
         point_history[_epoch] = last_point;
@@ -806,21 +806,21 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
             // and add old_user_slope to [old_locked.end]
             if (old_locked.end > block.timestamp) {
                 // old_dslope was <something> - u_old.slope, so we cancel that
-                console.logInt(old_dslope);
-                console.log("old_dslope before");
+                // console.logInt(old_dslope);
+                // console.log("old_dslope before");
                 old_dslope += u_old.slope;
 
-                console.logInt(u_old.slope);
-                console.log("u_old.slope");
-                console.logInt(old_dslope);
-                console.log("old_dslope after");
+                // console.logInt(u_old.slope);
+                // console.log("u_old.slope");
+                // console.logInt(old_dslope);
+                // console.log("old_dslope after");
 
                 if (new_locked.end == old_locked.end) {
                     old_dslope -= u_new.slope; // It was a new deposit, not extension
                 }
                 slope_changes[old_locked.end] = old_dslope;
-                console.logInt(slope_changes[old_locked.end]);
-                console.log("slope_changes[old_locked.end]");
+                // console.logInt(slope_changes[old_locked.end]);
+                // console.log("slope_changes[old_locked.end]");
             }
 
             if (new_locked.end > block.timestamp) {
@@ -828,23 +828,23 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
                     new_dslope -= u_new.slope; // old slope disappeared at this point
                     slope_changes[new_locked.end] = new_dslope;
 
-                    console.logInt(slope_changes[new_locked.end]);
-                    console.log("slope_changes[new_locked.end]");
+                    // console.logInt(slope_changes[new_locked.end]);
+                    // console.log("slope_changes[new_locked.end]");
                 }
                 // else: we recorded it already in old_dslope
             }
             // Now handle user history
             uint256 user_epoch = user_point_epoch[_tokenId] + 1;
-            console.logInt(u_new.slope);
-            console.log("u_new.slope");
+            // console.logInt(u_new.slope);
+            // console.log("u_new.slope");
 
-            console.logInt(u_new.bias);
-            console.log("u_new.bias");
+            // console.logInt(u_new.bias);
+            // console.log("u_new.bias");
             user_point_epoch[_tokenId] = user_epoch;
             u_new.ts = block.timestamp;
             u_new.blk = block.number;
             user_point_history[_tokenId][user_epoch] = u_new;
-            console.log("**----------------**");
+            // console.log("**----------------**");
         }
     }
 
@@ -873,7 +873,7 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
             _locked.end = unlock_time;
         }
         locked[_tokenId] = _locked;
-        console.log(unlock_time, "unlock_time");
+        // console.log(unlock_time, "unlock_time");
         // Possibilities:
         // Both old_locked.end could be current or expired (>/< block.timestamp)
         // value == 0 (extend lock) or value > 0 (add to lock or extend lock)
@@ -944,7 +944,7 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
             WEEK; // Locktime is rounded down to weeks
         // console.log(WEEK, "SEC in week");
         // console.log(((1674381698 + 644304) / (WEEK)) * WEEK, "This is calc");
-        console.log(unlock_time);
+        // console.log(unlock_time);
         require(_value > 0); // dev: need non-zero value
         require(
             unlock_time > block.timestamp,

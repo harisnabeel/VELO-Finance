@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity 0.8.13;
 
+
 import "contracts/interfaces/IVelo.sol";
 
 contract Velo is IVelo {
     string public constant name = "0xEquity";
-    string public constant symbol = "XEQ";
+    string public constant symbol = "VELO";
     uint8 public constant decimals = 18;
     uint256 public totalSupply = 0;
 
@@ -26,7 +27,7 @@ contract Velo is IVelo {
 
     constructor() {
         minter = msg.sender;
-        _mint(msg.sender, 10000 * (10 ** 18));
+        _mint(msg.sender, 700000 * (10 ** 18));
     }
 
     // No checks as its meant to be once off to set minting rights to BaseV1 Minter

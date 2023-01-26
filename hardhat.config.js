@@ -5,6 +5,7 @@ require("@typechain/hardhat");
 // require("hardhat-abi-exporter");
 require("hardhat-contract-sizer");
 require("hardhat-gas-reporter");
+require("@jarvisnetwork/core-sdk");
 // require( "./tasks/deploy");
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -28,6 +29,7 @@ module.exports = {
         `${process.env.PRIVATE_KEY3}`,
         `${process.env.PRIVATE_KEY4}`,
         `${process.env.PRIVATE_KEY5}`,
+        `${process.env.PRIVATE_KEY6}`,
       ],
       gasPrice: 20000000000, // 20 GWEI
       gas: "auto",
@@ -64,10 +66,8 @@ module.exports = {
   },
   etherscan: {
     apiKey: {
- 
       polygon: process.env.POLYGON_API_KEY,
       polygonMumbai: process.env.POLYGON_API_KEY,
-      
     },
-  }
+  },
 };

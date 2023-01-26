@@ -5,48 +5,50 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 
 import { ethers } from "hardhat";
-import { Velo,GaugeFactory, RewardsDistributor, VotingEscrow, PairFactory, BribeFactory, VeArtProxy, Voter, Minter } from "../types";
+import {
+  Velo,
+  GaugeFactory,
+  RewardsDistributor,
+  VotingEscrow,
+  PairFactory,
+  BribeFactory,
+  VeArtProxy,
+  Voter,
+  Minter,
+} from "../types";
 
 // global scope, and execute the script.
 const hre = require("hardhat");
-const path = require('path');
-const fs = require('fs');
-const {
-  verifyContract
-} = require("./utils/verfierHelper");
+const path = require("path");
+const fs = require("fs");
+const { verifyContract } = require("./utils/verfierHelper");
+let admin, alice, bob, carol, teamMultisig, asim1, asim2;
+
 const network = hre.hardhatArguments.network;
-let admin, alice, bob, carol;
-const delay = ms => new Promise(res => setTimeout(res, ms));
+const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 import * as tdr from "truffle-deploy-registry";
 
-
-async function readJsonFromFile(filePath){
-  return JSON.parse(fs.readFileSync(filePath, {encoding:'utf-8'}));
+async function readJsonFromFile(filePath) {
+  return JSON.parse(fs.readFileSync(filePath, { encoding: "utf-8" }));
 }
 
-async function addToTvr(
-  address,
-  args,
-  network,
-  networkId,
-) {
+async function addToTvr(address, args, network, networkId) {
   // Adds in constructor args for contracts in the k, v store
   // e.g. Produces a networks/1_args.json
   // with the structure
   // { "address": "args" }
-  if (network && network !== 'hardhat') {
+  if (network && network !== "hardhat") {
     const tvrPath = path.join(
       process.cwd(),
-      'networks',
-      `${networkId}_args.json`,
+      "networks",
+      `${networkId}_args.json`
     );
-    
 
     let tvrData = {};
 
     // If file exists, just read it
     if (fs.existsSync(tvrPath)) {
-      tvrData = (await readJsonFromFile(tvrPath));
+      tvrData = await readJsonFromFile(tvrPath);
     }
 
     // Remove { 'from': ... } thats present in the deployment args
@@ -55,7 +57,7 @@ async function addToTvr(
     const argsFixed = args
       .filter(
         (x) =>
-          !x.from && (typeof x === 'object' ? Object.keys(x).length > 0 : true),
+          !x.from && (typeof x === "object" ? Object.keys(x).length > 0 : true)
       )
       .map((x) => {
         // Tuple
@@ -66,55 +68,60 @@ async function addToTvr(
     // Save to file
     fs.writeFileSync(
       tvrPath,
-      JSON.stringify({ ...tvrData, [address]: argsFixed }, null, 4),
+      JSON.stringify({ ...tvrData, [address]: argsFixed }, null, 4)
     );
   }
 }
 
 async function getExistingContract(contractName) {
   const Contract = await ethers.getContractFactory(contractName);
-  const entry = await tdr.findLastByContractName(hre.network.config.chainId, contractName);
+  const entry = await tdr.findLastByContractName(
+    hre.network.config.chainId,
+    contractName
+  );
   if (entry) {
-    return new ethers.Contract(entry.address, Contract.interface)
+    return new ethers.Contract(entry.address, Contract.interface);
   }
 }
 async function _deploy(contractName, ...args) {
-
-
   const Contract = await ethers.getContractFactory(contractName);
-  
-  if (network && network !== 'hardhat') {
-    const existingContract = await getExistingContract(contractName)
-    if(existingContract){
-      console.log("Deployment Already Exist. Skipping deployment >", contractName)
+
+  if (network && network !== "hardhat") {
+    const existingContract = await getExistingContract(contractName);
+    if (existingContract) {
+      console.log(
+        "Deployment Already Exist. Skipping deployment >",
+        contractName
+      );
       return existingContract;
     }
-    
   }
-  
-  
-  let contract
-  if (args.length >0 && args[0] === null) {
-    console.log("New Deployment without Args >", contractName)
+
+  let contract;
+  if (args.length > 0 && args[0] === null) {
+    console.log("New Deployment without Args >", contractName);
     contract = await Contract.deploy();
   } else {
-    console.log("New Deployment wtith Args >", contractName,args)
+    console.log("New Deployment wtith Args >", contractName, args);
     contract = await Contract.deploy(...args);
-    await addToTvr(contract.address,args,network,contract.deployTransaction.chainId)
+    await addToTvr(
+      contract.address,
+      args,
+      network,
+      contract.deployTransaction.chainId
+    );
   }
 
   await contract.deployed();
-  if(network && network !== 'hardhat'){
-    console.log("Verifiying Contract >", contractName)
-    console.log("Contract params>", args)
-    if (args.length >0 && args[0] === null) {
-      await verifyContract(contract.address);
+  if (network && network !== "hardhat") {
+    console.log("Verifiying Contract >", contractName);
+    console.log("Contract params>", args);
+    if (args.length > 0 && args[0] === null) {
+      await verifyContract(contract.address, []);
     } else {
       await verifyContract(contract.address, ...args);
     }
   }
-  
-
 
   await tdr.append(contract.deployTransaction.chainId, {
     contractName: contractName,
@@ -125,8 +132,8 @@ async function _deploy(contractName, ...args) {
   return contract;
 }
 async function main() {
-  [admin, alice, bob, carol] = await ethers.getSigners();
-
+  [admin, alice, bob, carol, teamMultisig, asim1, asim2] =
+    await ethers.getSigners();
   // Load
   const [
     Velo,
@@ -151,50 +158,64 @@ async function main() {
   ]);
 
   // deploying VELO
-  const velo = await _deploy("Velo", null) as Velo;
+  const velo = (await _deploy("Velo", null)) as Velo;
   console.log("Velo deployed to: ", velo.address);
 
   // deploying GaugeFactory
-  const gaugeFactory = await _deploy("GaugeFactory", null) as GaugeFactory // creates gauges (distributes rewards to Liq pools)
+  const gaugeFactory = (await _deploy("GaugeFactory", null)) as GaugeFactory; // creates gauges (distributes rewards to Liq pools)
   console.log("GaugeFactory deployed to: ", gaugeFactory.address);
 
   // deploying bribeFactory
-  const bribeFactory = await _deploy("BribeFactory", null) as BribeFactory;
+  const bribeFactory = (await _deploy("BribeFactory", null)) as BribeFactory;
   console.log("BribeFactory deployed to: ", bribeFactory.address);
 
   // deploying pairFactory
-  const pairFactory = await _deploy("PairFactory", null) as PairFactory;
+  const pairFactory = (await _deploy("PairFactory", null)) as PairFactory;
   console.log("PairFactory deployed to: ", pairFactory.address);
 
+  const weth = await _deploy("Mockerc20", "Wrapped ETH", "WETH");
+  console.log("WETH is deployed at: ", weth.address);
+
+  const router = await _deploy("Router", pairFactory.address, weth.address);
+  console.log("Router is deployed at: ", router.address);
+
   // deploying art Proxy
-  const artProxy = await _deploy("VeArtProxy", null) as VeArtProxy;
+  const artProxy = (await _deploy("VeArtProxy", null)) as VeArtProxy;
   console.log("VeArtProxy deployed to: ", artProxy.address);
 
   // deploying Voting Escro
-  const escrow = await _deploy("VotingEscrow", velo.address, artProxy.address) as VotingEscrow;
+  const escrow = (await _deploy(
+    "VotingEscrow",
+    velo.address,
+    artProxy.address
+  )) as VotingEscrow;
   console.log("VotingEscrow deployed to: ", escrow.address);
   console.log("Args: ", velo.address, artProxy.address, "\n");
- 
+
   // now deploying reward distribution
 
-  const distributor = await _deploy("RewardsDistributor", escrow.address) as RewardsDistributor;
+  const distributor = (await _deploy(
+    "RewardsDistributor",
+    escrow.address
+  )) as RewardsDistributor;
   console.log("RewardsDistributor deployed to: ", distributor.address);
   console.log("Args: ", escrow.address, "\n");
-  await verifyContract(distributor.address, [escrow.address]);
+  // await verifyContract(distributor.address, [escrow.address]);
 
   // deploying voter
-  const voter = await _deploy("Voter", escrow.address,
+  const voter = (await _deploy(
+    "Voter",
+    escrow.address,
     pairFactory.address,
     gaugeFactory.address,
     bribeFactory.address
-  ) as Voter;
+  )) as Voter;
 
-  await verifyContract(voter.address, [escrow.address,
-    pairFactory.address,
-    gaugeFactory.address,
-    bribeFactory.address
-  ]);
-
+  // await verifyContract(voter.address, [escrow.address,
+  //   pairFactory.address,
+  //   gaugeFactory.address,
+  //   bribeFactory.address
+  // ]);
 
   console.log("Voter deployed to: ", voter.address);
   console.log(
@@ -207,15 +228,16 @@ async function main() {
   );
 
   // deploying minter
-  const minter = await _deploy("Minter",
+  const minter = (await _deploy(
+    "Minter",
     voter.address,
     escrow.address,
     distributor.address
-  ) as Minter;
+  )) as Minter;
 
-  await verifyContract(minter.address, [  voter.address,
-    escrow.address,
-    distributor.address]);
+  // await verifyContract(minter.address, [  voter.address,
+  //   escrow.address,
+  //   distributor.address]);
   console.log("Minter deployed to: ", minter.address);
   console.log(
     "Args: ",
@@ -227,16 +249,58 @@ async function main() {
 
 
 
+
+
+    // CONFIGS-------------------------------------------------------
+
+    await minter.setTeam(carol.address);
+    await velo.setMinter(minter.address);
+  
+    await pairFactory.setPauser(teamMultisig.address);
+  
+    await escrow.setVoter(voter.address);
+    console.log("Voter set");
+  
+    await escrow.setTeam(carol.address);
+    console.log("Team set for escrow");
+  
+    await voter.setGovernor(carol.address);
+    console.log("Governor set");
+  
+    await voter.setEmergencyCouncil(carol.address);
+    console.log("Emergency Council set");
+  
+    await distributor.setDepositor(minter.address);
+    console.log("Depositor set");
+  
+    await voter.initialize(
+      [velo.address, "0xaEbf6850CeA7142382CAE2d84451bDAaCbBb79F7", weth.address],
+      minter.address
+    );
+    console.log("Whitelist set");
+  
+    await minter.initialize(
+      [asim1.address, asim2.address],
+      [ethers.utils.parseUnits("10000", 18), ethers.utils.parseUnits("5000", 18)],
+      ethers.utils.parseUnits("15000", 18)
+    );
+    console.log("veVELO distributed");
+
+  // const usdc = await _deploy("Mockerc20", "USDC Stable", "USDC");
+  // console.log("WETH is deployed at: ", weth.address);
+
   return;
   const valueToTransfer = ethers.utils.parseUnits("50000", 18);
   const valueToTransfer2 = ethers.utils.parseUnits("5000", 18);
   // admin giving some VELO to alice
-  await velo.transfer("0xF1f6Cc709c961069D33F797575eA966c94C1357B", valueToTransfer );
+  await velo.transfer(
+    "0xF1f6Cc709c961069D33F797575eA966c94C1357B",
+    valueToTransfer
+  );
   // expect(await velo.balanceOf(alice.address)).to.be.equal(valueToTransfer);
 
   // await velo.connect(alice).approve( escrow.address,valueToTransfer);
 
-  
   // console.log( await escrow.connect(alice).balanceOfNFT(1),">> balance");
 
   // // now alice is creating a lock

@@ -6,8 +6,8 @@ const {
 const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
-const { execSync } = require("child_process");
-const { escapeLeadingUnderscores } = require("typescript");
+const { verifyContract } = require("./../scripts/utils/verfierHelper");
+const { FixBigNumber } = require("@jarvisnetwork/core-sdk");
 
 let velo,
   gaugeFactory,
@@ -23,6 +23,7 @@ let velo,
   WETH,
   xequsdPair;
 let admin, alice, bob, carol, teamMultisig, asim1, asim2;
+const WEEK = 604800;
 const valueToTransfer = ethers.utils.parseUnits("3000", 18);
 
 describe("VELO", function () {
@@ -61,20 +62,20 @@ describe("VELO", function () {
     // deploying VELO
     velo = await Velo.deploy();
     await velo.deployed();
-    // console.log("Velo deployed to: ", velo.address);
+    console.log("Velo deployed to: ", velo.address);
 
     // deploying GaugeFactory
     gaugeFactory = await GaugeFactory.deploy(); // creates gauges (distributes rewards to Liq pools)
     await gaugeFactory.deployed();
-    // console.log("GaugeFactory deployed to: ", gaugeFactory.address);
+    console.log("GaugeFactory deployed to: ", gaugeFactory.address);
 
     //deploying bribeFactory
     bribeFactory = await BribeFactory.deploy();
-    // console.log("BribeFactory deployed to: ", bribeFactory.address);
+    console.log("BribeFactory deployed to: ", bribeFactory.address);
 
     // deploying Pair Factory
     pairFactory = await PairFactory.deploy();
-    // console.log("pairFactory deployed to: ", pairFactory.address);
+    console.log("pairFactory deployed to: ", pairFactory.address);
 
     // deploying WETH
     WETH = await (
@@ -82,6 +83,7 @@ describe("VELO", function () {
         await ethers.getContractFactory("Mockerc20")
       ).deploy("Wrapped ETH", "WETH")
     ).deployed();
+    console.log(WETH.address, "WETH is deployed at: ");
 
     // deploying router
     router = await (
@@ -89,21 +91,22 @@ describe("VELO", function () {
         await ethers.getContractFactory("Router")
       ).deploy(pairFactory.address, WETH.address)
     ).deployed();
+    console.log(router.address, "Router is deployed at: ");
 
     // deploying art Proxy
     artProxy = await VeArtProxy.deploy();
     await artProxy.deployed();
-    // console.log("VeArtProxy deployed to: ", artProxy.address);
+    console.log("VeArtProxy deployed to: ", artProxy.address);
 
     // deploying Voting Escro
     escrow = await VotingEscrow.deploy(velo.address, artProxy.address);
     await escrow.deployed();
-    // console.log("VotingEscrow deployed to: ", escrow.address);
+    console.log("VotingEscrow deployed to: ", escrow.address);
     // console.log("Args: ", velo.address, artProxy.address, "\n");
 
     // now deploying reward distribution
     distributor = await RewardsDistributor.deploy(escrow.address);
-    // console.log("RewardsDistributor deployed to: ", distributor.address);
+    console.log("RewardsDistributor deployed to: ", distributor.address);
 
     // deploying voter
     voter = await Voter.deploy(
@@ -112,7 +115,7 @@ describe("VELO", function () {
       gaugeFactory.address,
       bribeFactory.address
     );
-    // console.log("Voter deployed to: ", voter.address);
+    console.log("Voter deployed to: ", voter.address);
 
     // deploying the minter
     minter = await Minter.deploy(
@@ -128,11 +131,39 @@ describe("VELO", function () {
         await ethers.getContractFactory("Mockerc20")
       ).deploy("USDC Stable", "USDC")
     ).deployed();
+
+    console.log(usdc.address, "USDC is deployed at: ");
+
     xeq = await (
       await (
         await ethers.getContractFactory("Mockerc20")
       ).deploy("0xEquity", "XEQ")
     ).deployed();
+
+    console.log(xeq.address, "XEQ is deployed at: ");
+
+    // await verifyContract(velo.address, []);
+    // await verifyContract(gaugeFactory.address, []);
+    // await verifyContract(bribeFactory.address, []);
+    // await verifyContract(pairFactory.address, []);
+    // await verifyContract(WETH.address, ["Wrapped ETH", "WETH"]);
+    // await verifyContract(router.address, [pairFactory.address, WETH.address]);
+    // await verifyContract(artProxy.address, []);
+    // await verifyContract(escrow.address, [velo.address, artProxy.address]);
+    // await verifyContract(distributor.address, [escrow.address]);
+    // await verifyContract(voter.address, [
+    //   escrow.address,
+    //   pairFactory.address,
+    //   gaugeFactory.address,
+    //   bribeFactory.address,
+    // ]);
+    // await verifyContract(minter.address, [
+    //   voter.address,
+    //   escrow.address,
+    //   distributor.address,
+    // ]);
+    // await verifyContract(usdc.address, ["USDC Stable", "USDC"]);
+    // await verifyContract(xeq.address, ["0xEquity", "XEQ"]);
 
     // CONFIGS-------------------------------------------------------
 
@@ -157,7 +188,7 @@ describe("VELO", function () {
     console.log("Depositor set");
 
     await voter.initialize(
-      [xeq.address, usdc.address, WETH.address],
+      [xeq.address, usdc.address, WETH.address, velo.address],
       minter.address
     );
     console.log("Whitelist set");
@@ -173,8 +204,201 @@ describe("VELO", function () {
     console.log("veVELO distributed");
   }
 
+  async function printSingleVeloBalance(address) {
+    console.log(
+      FixBigNumber.fromWei((await velo.balanceOf(address)).toString()).toFixed(
+        4
+      ),
+      "balance of address",
+      address
+    );
+  }
+  const transactionDelay = 30;
+  const getExpiration = () => {
+    const timeout = transactionDelay
+      ? parseFloat(transactionDelay) * 60
+      : 4 * 3600;
+    return ((Date.now() / 1000) | 0) + timeout;
+  };
+
+  async function printSingleNFTBalance(nftId) {
+    console.log(
+      FixBigNumber.fromWei(
+        (await escrow.balanceOfNFT(nftId)).toString()
+      ).toFixed(4),
+      "Balance of NFT ID ",
+      nftId
+    );
+  }
+  async function printUserVeloBalances() {
+    console.log(
+      FixBigNumber.fromWei(
+        (await velo.balanceOf(admin.address)).toString()
+      ).toFixed(4),
+      "User 1 balance of"
+    );
+    console.log(
+      FixBigNumber.fromWei(
+        (await velo.balanceOf(alice.address)).toString()
+      ).toFixed(4),
+      "User 2 balance of"
+    );
+    console.log(
+      FixBigNumber.fromWei(
+        (await velo.balanceOf(bob.address)).toString()
+      ).toFixed(4),
+      "User 3 balance of"
+    );
+    console.log(
+      FixBigNumber.fromWei(
+        (await velo.balanceOf(carol.address)).toString()
+      ).toFixed(4),
+      "User 4 balance of"
+    );
+    console.log(
+      FixBigNumber.fromWei(
+        (await velo.balanceOf(teamMultisig.address)).toString()
+      ).toFixed(4),
+      "User 5 balance of"
+    );
+    console.log(
+      FixBigNumber.fromWei(
+        (await velo.balanceOf(asim1.address)).toString()
+      ).toFixed(4),
+      "User 6 balance of"
+    );
+    console.log(
+      FixBigNumber.fromWei(
+        (await velo.balanceOf(asim2.address)).toString()
+      ).toFixed(4),
+      "User 7 balance of"
+    );
+    console.log(
+      FixBigNumber.fromWei((await velo.totalSupply()).toString()).toFixed(4),
+      "VELO TOTAL supply"
+    );
+
+    console.log(
+      "END OF VELO BALANCES---------------------------------------------"
+    );
+  }
+
+  async function printUserNFTBalances() {
+    console.log(
+      FixBigNumber.fromWei((await escrow.balanceOfNFT(1)).toString()).toFixed(
+        4
+      ),
+      "Balance of NFT USER 1"
+    );
+    console.log(
+      FixBigNumber.fromWei((await escrow.balanceOfNFT(2)).toString()).toFixed(
+        4
+      ),
+      "Balance of NFT USER 2"
+    );
+    console.log(
+      FixBigNumber.fromWei((await escrow.balanceOfNFT(3)).toString()).toFixed(
+        4
+      ),
+      "Balance of NFT USER 3"
+    );
+    console.log(
+      FixBigNumber.fromWei((await escrow.balanceOfNFT(4)).toString()).toFixed(
+        4
+      ),
+      "Balance of NFT USER 4"
+    );
+    console.log(
+      FixBigNumber.fromWei((await escrow.balanceOfNFT(5)).toString()).toFixed(
+        4
+      ),
+      "Balance of NFT USER 5"
+    );
+    console.log(
+      FixBigNumber.fromWei((await escrow.balanceOfNFT(6)).toString()).toFixed(
+        4
+      ),
+      "Balance of NFT USER 6"
+    );
+    console.log(
+      FixBigNumber.fromWei((await escrow.balanceOfNFT(7)).toString()).toFixed(
+        4
+      ),
+      "Balance of NFT USER 7"
+    );
+
+    console.log(
+      "END OF NFT BALANCES PRINT -----------------------------------------------------"
+    );
+  }
+
+  async function distributeVelo() {
+    const valueToTransfer = ethers.utils.parseUnits("100000", 18);
+    await velo.transfer(alice.address, valueToTransfer);
+    await velo.transfer(bob.address, valueToTransfer);
+    await velo.transfer(carol.address, valueToTransfer);
+    await velo.transfer(teamMultisig.address, valueToTransfer);
+    await velo.transfer(asim1.address, valueToTransfer);
+    await velo.transfer(asim2.address, valueToTransfer);
+
+    console.log(
+      "END OF VELO DISTRIBUTION -----------------------------------------------------"
+    );
+  }
+
+  async function createLockForUser(amount, duration, signer) {
+    await velo.approve(escrow.address, amount);
+    await escrow.connect(signer).create_lock(amount, duration);
+    console.log("Lock created------------------------------------------");
+  }
+
+  async function addLiquidityForUser(signer, deadline) {
+    await velo
+      .connect(signer)
+      .approve(router.address, ethers.utils.parseUnits("1000000000000000000", 18));
+    await usdc
+      .connect(signer)
+      .approve(router.address, ethers.utils.parseUnits("10000000000000000000", 18));
+    // addinng liquiduty
+    await router
+      .connect(signer)
+      .addLiquidity(
+        velo.address,
+        usdc.address,
+        false,
+        ethers.utils.parseUnits("10000", 18),
+        ethers.utils.parseUnits("1000", 18),
+        0,
+        0,
+        signer.address,
+        deadline
+      );
+
+    console.log("Liquiduty Added-------------------------------------------");
+  }
+
+  async function swapForUser(from, to, amount, signer) {
+    await velo.connect(signer).approve(router.address, amount);
+    await usdc.connect(signer).approve(router.address, amount);
+
+    let expectedAmoutOut = await router.getAmountsOut(amount, [
+      [from, to, false],
+    ]);
+    console.log(expectedAmoutOut);
+    // swapping
+    await router
+      .connect(signer)
+      .swapExactTokensForTokens(
+        amount,
+        expectedAmoutOut[1],
+        [[from, to, false]],
+        signer.address,
+        getExpiration()
+      );
+  }
+
   describe("Deployment", function () {
-    it("Should deploy the contracts", async function () {
+    xit("Should deploy the contracts", async function () {
       await deployContracts();
     });
 
@@ -320,18 +544,96 @@ describe("VELO", function () {
     });
 
     describe.only("Pair test", function () {
-      it("Create a piar ", async function () {
-        // deploying new contracts
+      it.only("Pre-req", async function () {
         await deployContracts();
+        await printUserVeloBalances();
+        await printUserNFTBalances();
+        await distributeVelo();
+        await printUserVeloBalances();
+      });
+
+      it.only("Create a piar ", async function () {
+        // deploying new contracts
+        // await deployContracts();
 
         // craeting pair
-        await pairFactory.createPair(xeq.address, usdc.address, false);
+        await pairFactory.createPair(velo.address, usdc.address, false);
 
         console.log(await pairFactory.allPairs(0), "Pair address");
         let pair = await pairFactory.allPairs(0);
         pair = await ethers.getContractAt("Pair", pair);
 
         console.log(await pair.name(), "Pair name");
+      });
+
+      it.only("Creating guage", async function () {
+        let pair = await pairFactory.allPairs(0);
+        // pair = await ethers.getContractAt("Pair", pair);
+        let tx = await voter.createGauge(pair);
+        // tx = await tx.wait();
+        // console.log(tx.log);
+      });
+
+      it.only("Create lock user 1", async function () {
+        let pair = await pairFactory.allPairs(0);
+        let valueForLock = ethers.utils.parseUnits("1000", 18);
+        let duration = WEEK * 52;
+        await createLockForUser(valueForLock, duration, admin);
+        await printUserNFTBalances();
+        await printUserVeloBalances();
+        const amountToTransfer = ethers.utils.parseUnits("1000", 18);
+        const minAMount = ethers.utils.parseUnits("100", 18);
+        let quoteLiq = await router.quoteAddLiquidity(
+          velo.address,
+          usdc.address,
+          false,
+          amountToTransfer,
+          minAMount
+        );
+        // console.log(quoteLiq);
+        const deadline = (await time.latest()) + 86400;
+
+        // add liq
+        await addLiquidityForUser(admin, deadline);
+
+        // deposit LP to guaage
+        const guageAddress = await voter.gauges(pair);
+
+        pair = await ethers.getContractAt("Pair", pair);
+
+        await pair
+          .connect(admin)
+          .approve(guageAddress, ethers.utils.parseUnits("10000000000", 18));
+
+        let guage = await ethers.getContractAt("Gauge", guageAddress);
+        await guage.depositAll(1);
+
+        console.log(
+          "Deposited to guage------------------------------------------"
+        );
+
+        await printSingleVeloBalance(admin.address);
+        await printSingleNFTBalance(1);
+
+        await printSingleVeloBalance(alice.address);
+        await addLiquidityForUser(alice, deadline);
+
+        await swapForUser(
+          velo.address,
+          usdc.address,
+          FixBigNumber.toWei(100).toExact(),
+          alice
+        );
+
+        // PRANK
+        await time.increase(WEEK);
+
+        await voter.connect(admin).vote(1, [pair.address], [9900]);
+
+        await voter.distribute1(guageAddress);
+
+        await printSingleVeloBalance(admin.address);
+        await printSingleNFTBalance(1);
       });
 
       it("Add liquidity", async function () {
@@ -392,10 +694,67 @@ describe("VELO", function () {
         console.log(await usdc.balanceOf(admin.address), "USDC balance after");
       });
 
-      it("Creating guage", async function () {
+      it("Empty", async function () {
+        await deployContracts();
+      });
+
+      xit("Simulate rewards", async function () {
+        console.log(await escrow.balanceOf(asim1.address), "asim 1 balance");
+        console.log(await escrow.balanceOf(asim2.address), "asim 2 balance");
+
+        console.log(
+          await escrow.tokenOfOwnerByIndex(asim1.address, 0),
+          "NFT id "
+        );
+        console.log(
+          await escrow.tokenOfOwnerByIndex(asim2.address, 0),
+          "NFT id "
+        );
+
+        console.log(await escrow.balanceOfNFT(1), "Balance of NFT 1");
+        console.log(await escrow.balanceOfNFT(2), "Balance of NFT 2");
+        console.log(await minter.active_period(), "Active period before");
         let pair = await pairFactory.allPairs(0);
-        // pair = await ethers.getContractAt("Pair", pair);
-        await voter.createGauge(pair);
+
+        // now voting to pool
+        await voter.connect(asim1).vote(1, [pair], [9900]);
+        await voter.connect(asim2).vote(2, [pair], [5000]);
+
+        await time.increase(WEEK);
+
+        console.log(await escrow.balanceOfNFT(1), "Balance of NFT 1 after");
+        console.log(await escrow.balanceOfNFT(2), "Balance of NFT 2 after");
+        console.log(await minter.active_period(), "Active period after");
+
+        // updating period in minter
+        // await minter.update_period();
+        const guageAddress = await voter.gauges(pair);
+        await voter.distribute1(guageAddress);
+        // await distributor.claim(1);
+        // await distributor.claim(2);
+        await time.increase(WEEK);
+        await voter.distribute1(guageAddress);
+        console.log(await minter.active_period(), "Active period after WEEK2");
+        await distributor.claim(1);
+
+        await time.increase(WEEK);
+        await voter.distribute1(guageAddress);
+        console.log(await minter.active_period(), "Active period after WEEK 3");
+        await distributor.claim(1);
+
+        await time.increase(WEEK);
+        await voter.distribute1(guageAddress);
+        console.log(await minter.active_period(), "Active period after WEEK 4");
+        console.log(
+          await minter.active_period(),
+          "Active period after update period"
+        );
+        await distributor.claim(1);
+
+        console.log(await escrow.balanceOfNFT(1), "Balance of NFT 1 after");
+        console.log(await escrow.balanceOfNFT(2), "Balance of NFT 2 after");
+
+        // now distriuting the fees
       });
     });
   });
