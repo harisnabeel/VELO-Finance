@@ -209,7 +209,17 @@ describe("VELO", function () {
       FixBigNumber.fromWei((await velo.balanceOf(address)).toString()).toFixed(
         4
       ),
-      "balance of address",
+      "balance of address VELO",
+      address
+    );
+  }
+
+  async function printSingleUSDCBalance(address) {
+    console.log(
+      FixBigNumber.fromWei((await usdc.balanceOf(address)).toString()).toFixed(
+        4
+      ),
+      "balance of address USDC",
       address
     );
   }
@@ -404,7 +414,7 @@ describe("VELO", function () {
     let expectedAmoutOut = await router.getAmountsOut(amount, [
       [from, to, false],
     ]);
-    console.log(expectedAmoutOut);
+    // console.log(expectedAmoutOut);
     // swapping
     await router
       .connect(signer)
@@ -637,14 +647,45 @@ describe("VELO", function () {
         await printSingleNFTBalance(1);
 
         await printSingleVeloBalance(alice.address);
+
         await addLiquidityForUser(alice, deadline);
 
         await swapForUser(
           velo.address,
           usdc.address,
-          FixBigNumber.toWei(100).toExact(),
+          FixBigNumber.toWei(100).toFormat(),
           alice
         );
+        await swapForUser(
+          velo.address,
+          usdc.address,
+          FixBigNumber.toWei(200).toFormat(),
+          alice
+        );
+        await swapForUser(
+          velo.address,
+          usdc.address,
+          FixBigNumber.toWei(300).toFormat(),
+          alice
+        );
+        await swapForUser(
+          usdc.address,
+          velo.address,
+          FixBigNumber.toWei(300).toFormat(),
+          alice
+        );
+        await swapForUser(
+          usdc.address,
+          velo.address,
+          FixBigNumber.toWei(300).toFormat(),
+          alice
+        );
+
+        const feesPairAdd = await pair.fees();
+        // console.log(await velo.balanceOf(feesPairAdd), "Velo fees");
+        // console.log(await usdc.balanceOf(feesPairAdd), "Velo fees");
+        await printSingleVeloBalance(alice.address);
+        await printSingleUSDCBalance(alice.address);
 
         // PRANK
         await time.increase(WEEK);
@@ -653,8 +694,37 @@ describe("VELO", function () {
 
         await voter.distribute1(guageAddress);
 
-        await printSingleVeloBalance(admin.address);
-        await printSingleNFTBalance(1);
+        await time.increase(WEEK);
+
+        await voter.distribute1(guageAddress);
+
+        console.log(
+          await escrow.balanceOfNFT(1),
+          "Balance of nft before claiabme"
+        );
+        console.log(await distributor.claimable(1), "claimable after prank");
+
+        await distributor.claim(1);
+        console.log(
+          await escrow.balanceOfNFT(1),
+          "Balance of nft after distribute"
+        );
+
+        // await printSingleVeloBalance(admin.address);
+        // await printSingleVeloBalance(alice.address);
+        // await printSingleNFTBalance(1);
+        // await printSingleVeloBalance(admin.address);
+        // await printSingleUSDCBalance(admin.address);
+        await pair.connect(alice).claimFees();
+        // await printSingleVeloBalance(alice.address);
+        // await printSingleUSDCBalance(alice.address);
+        // await printSingleVeloBalance(admin.address);
+        // await printSingleUSDCBalance(admin.address);
+
+        // console.log(guageAddress, "guageAddress");
+
+        // console.log(await velo.balanceOf(feesPairAdd), "Velo fees");
+        // console.log(await usdc.balanceOf(feesPairAdd), "usdc fees");
       });
 
       it("Add liquidity", async function () {

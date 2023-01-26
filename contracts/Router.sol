@@ -355,8 +355,8 @@ contract Router is IRouter {
         uint deadline
     ) external ensure(deadline) returns (uint[] memory amounts) {
         amounts = getAmountsOut(amountIn, routes);
-        console.log(amounts[amounts.length - 1],"Amount in router");
-        console.log(amountOutMin,"amountOutMin in router");
+        // console.log(amounts[amounts.length - 1],"Amount in router");
+        // console.log(amountOutMin,"amountOutMin in router");
         require(amounts[amounts.length - 1] >= amountOutMin, 'Router: INSUFFICIENT_OUTPUT_AMOUNT');
         _safeTransferFrom(
             routes[0].from, msg.sender, pairFor(routes[0].from, routes[0].to, routes[0].stable), amounts[0]
