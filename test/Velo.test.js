@@ -7,7 +7,7 @@ const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 const { verifyContract } = require("./../scripts/utils/verfierHelper");
-const { FixBigNumber } = require("@jarvisnetwork/core-sdk");
+const { FixBigNumber, jjTRY } = require("@jarvisnetwork/core-sdk");
 
 let velo,
   gaugeFactory,
@@ -21,7 +21,10 @@ let velo,
   usdc,
   xeq,
   WETH,
-  xequsdPair;
+  jTRY,
+  xequsdPair,
+  pairUSDC,
+  pairJTRY;
 let admin, alice, bob, carol, teamMultisig, asim1, asim2;
 const WEEK = 604800;
 const valueToTransfer = ethers.utils.parseUnits("3000", 18);
@@ -142,6 +145,14 @@ describe("VELO", function () {
 
     console.log(xeq.address, "XEQ is deployed at: ");
 
+    jTRY = await (
+      await (
+        await ethers.getContractFactory("Mockerc20")
+      ).deploy("JTRY", "JTRY")
+    ).deployed();
+
+    console.log(jTRY.address, "jTRY is deployed at: ");
+
     // await verifyContract(velo.address, []);
     // await verifyContract(gaugeFactory.address, []);
     // await verifyContract(bribeFactory.address, []);
@@ -188,7 +199,7 @@ describe("VELO", function () {
     console.log("Depositor set");
 
     await voter.initialize(
-      [xeq.address, usdc.address, WETH.address, velo.address],
+      [xeq.address, usdc.address, WETH.address, velo.address, jTRY.address],
       minter.address
     );
     console.log("Whitelist set");
@@ -204,23 +215,27 @@ describe("VELO", function () {
     console.log("veVELO distributed");
   }
 
-  async function printSingleVeloBalance(address) {
+  async function printSingleVeloBalance(address, name) {
     console.log(
+      name,
       FixBigNumber.fromWei((await velo.balanceOf(address)).toString()).toFixed(
         4
       ),
-      "balance of address VELO",
-      address
+      " balance of address VELO"
     );
   }
 
-  async function printSingleUSDCBalance(address) {
+  async function printLockBalanceofNFT(id, name) {
+    console.log(name, await escrow.locked(id), " locked balanacesss");
+  }
+
+  async function printSingleUSDCBalance(address, name) {
     console.log(
+      name,
       FixBigNumber.fromWei((await usdc.balanceOf(address)).toString()).toFixed(
         4
       ),
-      "balance of address USDC",
-      address
+      "balance of address USDC"
     );
   }
   const transactionDelay = 30;
@@ -370,8 +385,22 @@ describe("VELO", function () {
     );
   }
 
+  async function distributeJTRY() {
+    const valueToTransfer = ethers.utils.parseUnits("100000", 18);
+    await jTRY.transfer(alice.address, valueToTransfer);
+    await jTRY.transfer(bob.address, valueToTransfer);
+    await jTRY.transfer(carol.address, valueToTransfer);
+    await jTRY.transfer(teamMultisig.address, valueToTransfer);
+    await jTRY.transfer(asim1.address, valueToTransfer);
+    await jTRY.transfer(asim2.address, valueToTransfer);
+
+    console.log(
+      "END OF JTRY DISTRIBUTION -----------------------------------------------------"
+    );
+  }
+
   async function createLockForUser(amount, duration, signer) {
-    await velo.approve(escrow.address, amount);
+    await velo.connect(signer).approve(escrow.address, amount);
     await escrow.connect(signer).create_lock(amount, duration);
     console.log("Lock created------------------------------------------");
   }
@@ -405,6 +434,37 @@ describe("VELO", function () {
       );
 
     console.log("Liquiduty Added-------------------------------------------");
+  }
+
+  async function addLiquidityForUserJTRYPair(signer, deadline) {
+    await jTRY
+      .connect(signer)
+      .approve(
+        router.address,
+        ethers.utils.parseUnits("1000000000000000000", 18)
+      );
+    await usdc
+      .connect(signer)
+      .approve(
+        router.address,
+        ethers.utils.parseUnits("10000000000000000000", 18)
+      );
+    // addinng liquiduty
+    await router
+      .connect(signer)
+      .addLiquidity(
+        jTRY.address,
+        usdc.address,
+        false,
+        ethers.utils.parseUnits("10000", 18),
+        ethers.utils.parseUnits("1000", 18),
+        0,
+        0,
+        signer.address,
+        deadline
+      );
+
+    console.log("Liquiduty Added JTRYy-------------------------------------------");
   }
 
   async function swapForUser(from, to, amount, signer) {
@@ -580,10 +640,11 @@ describe("VELO", function () {
         await printUserNFTBalances();
         await distributeVelo();
         await distributeUsdc();
+        await distributeJTRY();
         await printUserVeloBalances();
       });
 
-      it.only("Create a piar ", async function () {
+      it.only("Create a pair ", async function () {
         // deploying new contracts
         // await deployContracts();
 
@@ -592,13 +653,36 @@ describe("VELO", function () {
 
         console.log(await pairFactory.allPairs(0), "Pair address");
         let pair = await pairFactory.allPairs(0);
-        pair = await ethers.getContractAt("Pair", pair);
+        pairUSDC = await ethers.getContractAt("Pair", pair);
 
-        console.log(await pair.name(), "Pair name");
+        console.log(await pairUSDC.name(), "Pair name");
+      });
+
+      it.only("Create a 2nd piar ", async function () {
+        // deploying new contracts
+        // await deployContracts();
+
+        // craeting pair
+        await pairFactory.createPair(jTRY.address, usdc.address, false);
+
+        console.log(await pairFactory.allPairs(1), "Pair address");
+        let pair = await pairFactory.allPairs(1);
+        pairJTRY = await ethers.getContractAt("Pair", pair);
+        console.log(pairJTRY.address, "Pair in deploy&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+
+        console.log(await pairJTRY.name(), "Pair name");
       });
 
       it.only("Creating guage", async function () {
         let pair = await pairFactory.allPairs(0);
+        // pair = await ethers.getContractAt("Pair", pair);
+        let tx = await voter.createGauge(pair);
+        // tx = await tx.wait();
+        // console.log(tx.log);
+      });
+
+      it.only("Creating 2nd guage", async function () {
+        let pair = await pairFactory.allPairs(1);
         // pair = await ethers.getContractAt("Pair", pair);
         let tx = await voter.createGauge(pair);
         // tx = await tx.wait();
@@ -610,6 +694,9 @@ describe("VELO", function () {
         let valueForLock = ethers.utils.parseUnits("1000", 18);
         let duration = WEEK * 52;
         await createLockForUser(valueForLock, duration, admin);
+        await createLockForUser(valueForLock, duration, alice);
+        await createLockForUser(valueForLock, duration, bob);
+        await createLockForUser(valueForLock, duration, carol);
         await printUserNFTBalances();
         await printUserVeloBalances();
         const amountToTransfer = ethers.utils.parseUnits("1000", 18);
@@ -626,96 +713,191 @@ describe("VELO", function () {
 
         // add liq
         await addLiquidityForUser(admin, deadline);
+        await addLiquidityForUserJTRYPair(alice, deadline);
 
         // deposit LP to guaage
-        const guageAddress = await voter.gauges(pair);
+        const guageAddressUSDC = await voter.gauges(pairUSDC.address);
+        const guageAddressjTRY = await voter.gauges(pairJTRY.address);
 
-        pair = await ethers.getContractAt("Pair", pair);
+        pairUSDC = await ethers.getContractAt("Pair", pair);
 
-        await pair
+        // await addLiquidityForUser(alice, deadline);
+
+        await pairUSDC
           .connect(admin)
-          .approve(guageAddress, ethers.utils.parseUnits("10000000000", 18));
+          .approve(guageAddressUSDC, ethers.utils.parseUnits("10000000000", 18));
+        
+        await pairJTRY
+          .connect(alice)
+          .approve(guageAddressjTRY, ethers.utils.parseUnits("10000000000", 18));
+        
 
-        let guage = await ethers.getContractAt("Gauge", guageAddress);
-        await guage.depositAll(1);
+        let guage = await ethers.getContractAt("Gauge", guageAddressUSDC);
+        let guageJtry = await ethers.getContractAt("Gauge", guageAddressjTRY);
+        await guage.connect(admin).depositAll(1);
+        await guageJtry.connect(alice).depositAll(2);
 
         console.log(
           "Deposited to guage------------------------------------------"
         );
 
-        await printSingleVeloBalance(admin.address);
+        await printSingleVeloBalance(admin.address, "admin");
         await printSingleNFTBalance(1);
 
-        await printSingleVeloBalance(alice.address);
+        await printSingleVeloBalance(alice.address, "alice");
 
-        await addLiquidityForUser(alice, deadline);
+        await voter.connect(admin).vote(1, [pairUSDC.address], [9900]);
+        await voter.connect(alice).vote(2, [pairUSDC.address], [9900]);
+        await voter.connect(bob).vote(3, [pairJTRY.address], [9900]);
+        await voter.connect(carol).vote(4, [pairJTRY.address], [9900]);
 
-        await swapForUser(
-          velo.address,
-          usdc.address,
-          FixBigNumber.toWei(100).toFormat(),
-          alice
-        );
-        await swapForUser(
-          velo.address,
-          usdc.address,
-          FixBigNumber.toWei(200).toFormat(),
-          alice
-        );
-        await swapForUser(
-          velo.address,
-          usdc.address,
-          FixBigNumber.toWei(300).toFormat(),
-          alice
-        );
-        await swapForUser(
-          usdc.address,
-          velo.address,
-          FixBigNumber.toWei(300).toFormat(),
-          alice
-        );
-        await swapForUser(
-          usdc.address,
-          velo.address,
-          FixBigNumber.toWei(300).toFormat(),
-          alice
+        // await swapForUser(
+        //   velo.address,
+        //   usdc.address,
+        //   FixBigNumber.toWei(100).toFormat(),
+        //   alice
+        // );
+        // await swapForUser(
+        //   velo.address,
+        //   usdc.address,
+        //   FixBigNumber.toWei(200).toFormat(),
+        //   alice
+        // );
+        // await swapForUser(
+        //   velo.address,
+        //   usdc.address,
+        //   FixBigNumber.toWei(300).toFormat(),
+        //   alice
+        // );
+        // await swapForUser(
+        //   usdc.address,
+        //   velo.address,
+        //   FixBigNumber.toWei(300).toFormat(),
+        //   alice
+        // );
+        // await swapForUser(
+        //   usdc.address,
+        //   velo.address,
+        //   FixBigNumber.toWei(300).toFormat(),
+        //   alice
+        // );
+
+        const feesPairAdd = await pairUSDC.fees();
+        await printSingleVeloBalance(alice.address, "alice");
+        await printSingleUSDCBalance(alice.address, "alice");
+
+        await printSingleVeloBalance(bob.address, "bob");
+        await printSingleUSDCBalance(bob.address, "bob");
+
+        console.log(await velo.balanceOf(feesPairAdd), "Velo fees");
+        console.log(await usdc.balanceOf(feesPairAdd), "usdc fees");
+
+        await printSingleVeloBalance(
+          admin.address,
+          "admin before prank------------------"
         );
 
-        const feesPairAdd = await pair.fees();
-        // console.log(await velo.balanceOf(feesPairAdd), "Velo fees");
-        // console.log(await usdc.balanceOf(feesPairAdd), "Velo fees");
-        await printSingleVeloBalance(alice.address);
-        await printSingleUSDCBalance(alice.address);
+        // changing team to alice
+        await minter.setTeam(asim1.address);
 
+        await minter.connect(asim1).acceptTeam();
         // PRANK
         await time.increase(WEEK);
+        // await printSingleVeloBalance(admin.address, "admin before dist");
+        // await printSingleVeloBalance(alice.address, "alice before dist");
+        // await printSingleVeloBalance(bob.address, "bob before dist");
+        await printLockBalanceofNFT(1, "admin locked balance");
+        await printLockBalanceofNFT(2, "alice locked balance");
+        await printLockBalanceofNFT(3, "bob locked balance");
 
-        await voter.connect(admin).vote(1, [pair.address], [9900]);
+        // console.log(await velo.balanceOf(voter.address), "Voter before");
+        console.log(await velo.balanceOf(guage.address), "Guage before");
+        // await voter.distribute1(guageAddressUSDC);
+        // await time.increase(WEEK);
 
-        await voter.distribute1(guageAddress);
+        console.log(await velo.balanceOf(guageAddressUSDC), "Guage 1 before");
+        console.log(await velo.balanceOf(guageAddressjTRY), "Guage 2 before");
+        await voter.distribute2([guageAddressUSDC, guageAddressjTRY]);
+        console.log(await velo.balanceOf(guageAddressUSDC), "Guage 1 after");
+        console.log(await velo.balanceOf(guageAddressjTRY), "Guage 2 after");
 
-        await time.increase(WEEK);
+        // await time.increase(WEEK-86400);
 
-        await voter.distribute1(guageAddress);
+        await distributor.connect(admin).claim(1);
+        await distributor.connect(alice).claim(2);
+        await distributor.connect(bob).claim(3);
 
-        console.log(
-          await escrow.balanceOfNFT(1),
-          "Balance of nft before claiabme"
-        );
-        console.log(await distributor.claimable(1), "claimable after prank");
+        await printLockBalanceofNFT(1, "admin locked balance after");
+        await printLockBalanceofNFT(2, "alice locked balance after");
+        await printLockBalanceofNFT(3, "bob locked balance after");
+        // await guage.getReward(admin.address, [velo.address]);
+        // await guage.connect(alice).getReward(alice.address, [velo.address]);
+        // await guage.connect(bob).getReward(bob.address, [velo.address]);
 
-        await distributor.claim(1);
-        console.log(
-          await escrow.balanceOfNFT(1),
-          "Balance of nft after distribute"
-        );
+        console.log(await velo.balanceOf(guage.address), "Guage after");
+        // console.log(await velo.balanceOf(voter.address), "Voter after");
+
+        // await voter.distribute1(guageAddress);
+        // console.log(await velo.balanceOf(voter.address), "Voter after 3nd disttt");
+
+        // await guage.getReward(admin.address, [velo.address]);
+        // await guage.connect(alice).getReward(alice.address, [velo.address]);
+        // await guage.connect(bob).getReward(bob.address, [velo.address]);
+        // // await voter.connect(alice).claimRewards([guageAddress],[[velo.address]]);
+        // await printSingleVeloBalance(admin.address, "admin after dist");
+        // await printSingleVeloBalance(alice.address, "alice after dist");
+        // await printSingleVeloBalance(bob.address, "bob after dist");
+
+        // // await printSingleUSDCBalance(alice.address, "alice usdc");
+
+        // // await printSingleVeloBalance(bob.address);
+        // // await printSingleUSDCBalance(bob.address);
+
+        // await time.increase(WEEK);
+
+        // await voter.distribute1(guageAddress);
+        // // await voter.connect(alice).claimRewards([guageAddress],[[velo.address]]);
+        // await printSingleVeloBalance(alice.address, "alice after dist 2");
+        // // await printSingleUSDCBalance(alice.address, "alice usdc");
+        // await printSingleVeloBalance(admin.address, "admin after dist 2");
+
+        // await time.increase(WEEK);
+
+        // await voter.distribute1(guageAddress);
+        // // await voter.connect(alice).claimRewards([guageAddress],[[velo.address]]);
+        // await printSingleVeloBalance(alice.address, "alice after dist 3");
+        // // await printSingleUSDCBalance(alice.address, "alice usdc");
+        // await printSingleVeloBalance(admin.address, "admin after dist 3");
+
+        // await pair.connect(alice).claimFees();
+        // await pair.connect(bob).claimFees();
+
+        // console.log(await velo.balanceOf(feesPairAdd), "Velo fees");
+        // console.log(await usdc.balanceOf(feesPairAdd), "usdc fees");
+
+        // await printSingleVeloBalance(alice.address, "alice");
+        // await printSingleUSDCBalance(alice.address, "alice");
+        // await printSingleVeloBalance(bob.address, "bob");
+        // await printSingleUSDCBalance(bob.address, "bob");
+
+        // console.log(
+        //   await escrow.balanceOfNFT(1),
+        //   "Balance of nft before claiabme"
+        // );
+        // console.log(await distributor.claimable(1), "claimable after prank");
+
+        // await distributor.claim(1);
+        // console.log(
+        //   await escrow.balanceOfNFT(1),
+        //   "Balance of nft after distribute"
+        // );
 
         // await printSingleVeloBalance(admin.address);
         // await printSingleVeloBalance(alice.address);
         // await printSingleNFTBalance(1);
         // await printSingleVeloBalance(admin.address);
         // await printSingleUSDCBalance(admin.address);
-        await pair.connect(alice).claimFees();
+
         // await printSingleVeloBalance(alice.address);
         // await printSingleUSDCBalance(alice.address);
         // await printSingleVeloBalance(admin.address);

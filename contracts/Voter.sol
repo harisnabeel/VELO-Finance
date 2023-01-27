@@ -372,6 +372,8 @@ contract Voter is IVoter {
     mapping(address => uint256) public claimable;
 
     function notifyRewardAmount(uint256 amount) external {
+        console.log(amount, "amount in voterrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+        console.log(base, "velo voterrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
         _safeTransferFrom(base, msg.sender, address(this), amount); // transfer the distro in
         console.log(totalWeight, "Total weight in voter");
         uint256 _ratio = (amount * 1e18) / totalWeight; // 1e18 adjustment is removed during claim
@@ -478,6 +480,7 @@ contract Voter is IVoter {
         if (
             _claimable > IGauge(_gauge).left(base) && _claimable / DURATION > 0
         ) {
+            console.log("Inside if ig distrubute1");
             claimable[_gauge] = 0;
             IGauge(_gauge).notifyRewardAmount(base, _claimable);
             emit DistributeReward(msg.sender, _gauge, _claimable);
@@ -499,6 +502,12 @@ contract Voter is IVoter {
     }
 
     function distribute(address[] memory _gauges) external {
+        for (uint256 x = 0; x < _gauges.length; x++) {
+            distribute(_gauges[x]);
+        }
+    }
+
+    function distribute2(address[] memory _gauges) external {
         for (uint256 x = 0; x < _gauges.length; x++) {
             distribute(_gauges[x]);
         }

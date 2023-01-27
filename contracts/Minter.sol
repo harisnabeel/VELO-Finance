@@ -21,7 +21,7 @@ contract Minter is IMinter {
     IVoter public immutable _voter;
     IVotingEscrow public immutable _ve;
     IRewardsDistributor public immutable _rewards_distributor;
-    uint256 public weekly = 15_000_000 * 1e18; // represents a starting weekly emission of 15M VELO (VELO has 18 decimals)
+    uint256 public weekly = 35000 * 1e18; // represents a starting weekly emission of 15M VELO (VELO has 18 decimals)
     uint256 public active_period;
     uint256 internal constant LOCK = 86400 * 7 * 52 * 4;
 
@@ -134,6 +134,7 @@ contract Minter is IMinter {
             }
 
             require(_velo.transfer(team, _teamEmissions));
+            console.log(_growth, "_growth in minterrrrrrrrrrrrrrrrrrrrrr");
             require(_velo.transfer(address(_rewards_distributor), _growth));
             _rewards_distributor.checkpoint_token(); // checkpoint token balance that was just minted in rewards distributor
             _rewards_distributor.checkpoint_total_supply(); // checkpoint supply
