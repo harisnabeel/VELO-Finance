@@ -8,7 +8,7 @@ import 'contracts/interfaces/IPair.sol';
 import 'contracts/interfaces/IPairFactory.sol';
 import 'contracts/interfaces/IRouter.sol';
 import 'contracts/interfaces/IWETH.sol';
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 
 contract Router is IRouter {
 
@@ -200,7 +200,7 @@ contract Router is IRouter {
     ) external ensure(deadline) returns (uint amountA, uint amountB, uint liquidity) {
         (amountA, amountB) = _addLiquidity(tokenA, tokenB, stable, amountADesired, amountBDesired, amountAMin, amountBMin);
         address pair = pairFor(tokenA, tokenB, stable);
-        console.log(pair,"pair***********************************************************");
+        // console.log(pair,"pair***********************************************************");
         _safeTransferFrom(tokenA, msg.sender, pair, amountA);
         _safeTransferFrom(tokenB, msg.sender, pair, amountB);
         liquidity = IPair(pair).mint(to);

@@ -8,7 +8,7 @@ import "contracts/interfaces/IGauge.sol";
 import "contracts/interfaces/IPair.sol";
 import "contracts/interfaces/IVoter.sol";
 import "contracts/interfaces/IVotingEscrow.sol";
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 
 // Gauges are used to incentivize pools, they emit reward tokens over 7 days for staked LP tokens
 contract Gauge is IGauge {
@@ -383,10 +383,10 @@ contract Gauge is IGauge {
             ) = _updateRewardPerToken(tokens[i], type(uint256).max, true);
 
             uint256 _reward = earned(tokens[i], account);
-            console.log(
-                _reward,
-                "reward in guage----------------------------------------"
-            );
+            // console.log(
+            //     _reward,
+            //     "reward in guage----------------------------------------"
+            // );
             lastEarn[tokens[i]][account] = block.timestamp;
             userRewardPerTokenStored[tokens[i]][account] = rewardPerTokenStored[
                 tokens[i]
@@ -573,17 +573,17 @@ contract Gauge is IGauge {
         view
         returns (uint256)
     {
-        console.log(
-            "CP1 in guage earned***********************************************"
-        );
+        // console.log(
+        //     "CP1 in guage earned***********************************************"
+        // );
         uint256 _startTimestamp = Math.max(
             lastEarn[token][account],
             rewardPerTokenCheckpoints[token][0].timestamp
         );
         if (numCheckpoints[account] == 0) {
-            console.log(
-                "CP2 in guage earned***********************************************"
-            );
+            // console.log(
+            //     "CP2 in guage earned***********************************************"
+            // );
 
             return 0;
         }
@@ -594,14 +594,14 @@ contract Gauge is IGauge {
         uint256 reward = 0;
 
         if (_endIndex > 0) {
-            console.log(
-                "CP3 in guage earned***********************************************"
-            );
+            // console.log(
+            //     "CP3 in guage earned***********************************************"
+            // );
 
             for (uint256 i = _startIndex; i <= _endIndex - 1; i++) {
-                console.log(
-                    "CP4 in guage earned***********************************************"
-                );
+                // console.log(
+                //     "CP4 in guage earned***********************************************"
+                // );
 
                 Checkpoint memory cp0 = checkpoints[account][i];
                 Checkpoint memory cp1 = checkpoints[account][i + 1];
@@ -619,7 +619,7 @@ contract Gauge is IGauge {
                     PRECISION;
             }
         }
-        console.log("CP5 in guage earned***********************************************");
+        // console.log("CP5 in guage earned***********************************************");
 
 
         Checkpoint memory cp = checkpoints[account][_endIndex];
@@ -644,16 +644,16 @@ contract Gauge is IGauge {
     }
 
     function deposit(uint256 amount, uint256 tokenId) public lock {
-        console.log("Inside the guage-------------------------------------------deposit");
-        console.log(amount, "amount the guage-------------------------------------------deposit");
+        // console.log("Inside the guage-------------------------------------------deposit");
+        // console.log(amount, "amount the guage-------------------------------------------deposit");
         require(amount > 0);
-        console.log("CP1 the guage-------------------------------------------deposit");
+        // console.log("CP1 the guage-------------------------------------------deposit");
 
         _updateRewardForAllTokens();
-        console.log("CP2 the guage-------------------------------------------deposit");
+        // console.log("CP2 the guage-------------------------------------------deposit");
 
         _safeTransferFrom(stake, msg.sender, address(this), amount);
-        console.log("CP3 the guage-------------------------------------------deposit");
+        // console.log("CP3 the guage-------------------------------------------deposit");
 
         totalSupply += amount;
         balanceOf[msg.sender] += amount;
@@ -750,43 +750,43 @@ contract Gauge is IGauge {
         _claimFees();
 
         if (block.timestamp >= periodFinish[token]) {
-            console.log(
-                token,
-                "token in guage-------------------------------------------------------------"
-            );
-            console.log(
-                msg.sender,
-                "msg senderrrrrrrrrrrrrrrrrrrrrrrrrr in guage-------------------------------------------------------------"
-            );
+            // console.log(
+            //     token,
+            //     "token in guage-------------------------------------------------------------"
+            // );
+            // console.log(
+            //     msg.sender,
+            //     "msg senderrrrrrrrrrrrrrrrrrrrrrrrrr in guage-------------------------------------------------------------"
+            // );
 
-            console.log(
-                amount,
-                "amount in guage-------------------------------------------------------------"
-            );
-            console.log(
-                IERC20(token).balanceOf(msg.sender),
-                "Balane of voterof velo in guague-----------------"
-            );
+            // console.log(
+            //     amount,
+            //     "amount in guage-------------------------------------------------------------"
+            // );
+            // console.log(
+            //     IERC20(token).balanceOf(msg.sender),
+            //     "Balane of voterof velo in guague-----------------"
+            // );
             _safeTransferFrom(token, msg.sender, address(this), amount);
             rewardRate[token] = amount / DURATION;
         } else {
-            console.log(
-                token,
-                "token in guage-------------------------------------------------------------"
-            );
-            console.log(
-                msg.sender,
-                "msg senderrrrrrrrrrrrrrrrrrrrrrrrrr in guage-------------------------------------------------------------"
-            );
+            // console.log(
+            //     token,
+            //     "token in guage-------------------------------------------------------------"
+            // );
+            // console.log(
+            //     msg.sender,
+            //     "msg senderrrrrrrrrrrrrrrrrrrrrrrrrr in guage-------------------------------------------------------------"
+            // );
 
-            console.log(
-                amount,
-                "amount in guage----2nddddddd---------------------------------------------------------"
-            );
-            console.log(
-                IERC20(token).balanceOf(msg.sender),
-                "Balane of voterof velo in guague-----------------"
-            );
+            // console.log(
+            //     amount,
+            //     "amount in guage----2nddddddd---------------------------------------------------------"
+            // );
+            // console.log(
+            //     IERC20(token).balanceOf(msg.sender),
+            //     "Balane of voterof velo in guague-----------------"
+            // );
 
             uint256 _remaining = periodFinish[token] - block.timestamp;
             uint256 _left = _remaining * rewardRate[token];

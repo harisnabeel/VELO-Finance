@@ -117,8 +117,12 @@ async function _deploy(contractName, ...args) {
     console.log("Verifiying Contract >", contractName);
     console.log("Contract params>", args);
     if (args.length > 0 && args[0] === null) {
+      console.log("Verify with no args---------------------");
+      console.log(contract.address, "this contract.addrss");
+
       await verifyContract(contract.address, []);
     } else {
+      console.log("Verify with args---------------------");
       await verifyContract(contract.address, ...args);
     }
   }
@@ -158,7 +162,12 @@ async function main() {
   ]);
 
   // deploying VELO
-  const velo = (await _deploy("Velo", null)) as Velo;
+  const velo = (await _deploy(
+    "MintableBurnableSyntheticTokenPermit",
+    "0xEquity",
+    "XEQ",
+    18
+  )) as Velo;
   console.log("Velo deployed to: ", velo.address);
 
   // deploying GaugeFactory
@@ -247,44 +256,40 @@ async function main() {
     "\n"
   );
 
+  // CONFIGS-------------------------------------------------------
 
+  await minter.setTeam(carol.address);
+  await velo.addMinter(minter.address);
 
+  await pairFactory.setPauser(teamMultisig.address);
 
+  await escrow.setVoter(voter.address);
+  console.log("Voter set");
 
-    // CONFIGS-------------------------------------------------------
+  await escrow.setTeam(carol.address);
+  console.log("Team set for escrow");
 
-    await minter.setTeam(carol.address);
-    await velo.setMinter(minter.address);
-  
-    await pairFactory.setPauser(teamMultisig.address);
-  
-    await escrow.setVoter(voter.address);
-    console.log("Voter set");
-  
-    await escrow.setTeam(carol.address);
-    console.log("Team set for escrow");
-  
-    await voter.setGovernor(carol.address);
-    console.log("Governor set");
-  
-    await voter.setEmergencyCouncil(carol.address);
-    console.log("Emergency Council set");
-  
-    await distributor.setDepositor(minter.address);
-    console.log("Depositor set");
-  
-    await voter.initialize(
-      [velo.address, "0xaEbf6850CeA7142382CAE2d84451bDAaCbBb79F7", weth.address],
-      minter.address
-    );
-    console.log("Whitelist set");
-  
-    await minter.initialize(
-      [asim1.address, asim2.address],
-      [ethers.utils.parseUnits("10000", 18), ethers.utils.parseUnits("5000", 18)],
-      ethers.utils.parseUnits("15000", 18)
-    );
-    console.log("veVELO distributed");
+  await voter.setGovernor(carol.address);
+  console.log("Governor set");
+
+  await voter.setEmergencyCouncil(carol.address);
+  console.log("Emergency Council set");
+
+  await distributor.setDepositor(minter.address);
+  console.log("Depositor set");
+
+  await voter.initialize(
+    [velo.address, "0xaEbf6850CeA7142382CAE2d84451bDAaCbBb79F7", weth.address,"0x5bcaac3B1F8b21D9727B6B0541bdf5d5E66B205c"],
+    minter.address
+  );
+  console.log("Whitelist set");
+
+  await minter.initialize(
+    [asim1.address, asim2.address],
+    [ethers.utils.parseUnits("10000", 18), ethers.utils.parseUnits("5000", 18)],
+    ethers.utils.parseUnits("15000", 18)
+  );
+  console.log("veVELO distributed");
 
   // const usdc = await _deploy("Mockerc20", "USDC Stable", "USDC");
   // console.log("WETH is deployed at: ", weth.address);

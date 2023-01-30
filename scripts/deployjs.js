@@ -26,6 +26,7 @@ const WEEK = 604800;
 const valueToTransfer = ethers.utils.parseUnits("3000", 18);
 
 async function deployContracts() {
+  // getting signers
   [admin, alice, bob, carol, teamMultisig, asim1, asim2] =
     await ethers.getSigners();
   // Load
@@ -40,7 +41,7 @@ async function deployContracts() {
     Voter,
     Minter,
   ] = await Promise.all([
-    ethers.getContractFactory("Velo"),
+    ethers.getContractFactory("MintableBurnableSyntheticTokenPermit"),
     ethers.getContractFactory("GaugeFactory"),
     ethers.getContractFactory("BribeFactory"),
     ethers.getContractFactory("PairFactory"),
@@ -52,7 +53,7 @@ async function deployContracts() {
   ]);
 
   // deploying VELO
-  velo = await Velo.deploy();
+  velo = await Velo.deploy("0xEquity", "XEQ", 18);
   await velo.deployed();
   console.log("Velo deployed to: ", velo.address);
 
@@ -115,7 +116,7 @@ async function deployContracts() {
     escrow.address,
     distributor.address
   );
-  console.log("Miter deployed to: ", minter.address);
+  console.log("Minter deployed to: ", minter.address);
 
   // deploying USDC
   usdc = await (
@@ -134,10 +135,39 @@ async function deployContracts() {
 
   console.log(xeq.address, "XEQ is deployed at: ");
 
-  // CONFIGS-------------------------------------------------------
+  jTRY = await (
+    await (await ethers.getContractFactory("Mockerc20")).deploy("JTRY", "JTRY")
+  ).deployed();
 
+  console.log(jTRY.address, "jTRY is deployed at: ");
+
+  // await verifyContract(velo.address, []);
+  // await verifyContract(gaugeFactory.address, []);
+  // await verifyContract(bribeFactory.address, []);
+  // await verifyContract(pairFactory.address, []);
+  // await verifyContract(WETH.address, ["Wrapped ETH", "WETH"]);
+  // await verifyContract(router.address, [pairFactory.address, WETH.address]);
+  // await verifyContract(artProxy.address, []);
+  // await verifyContract(escrow.address, [velo.address, artProxy.address]);
+  // await verifyContract(distributor.address, [escrow.address]);
+  // await verifyContract(voter.address, [
+  //   escrow.address,
+  //   pairFactory.address,
+  //   gaugeFactory.address,
+  //   bribeFactory.address,
+  // ]);
+  // await verifyContract(minter.address, [
+  //   voter.address,
+  //   escrow.address,
+  //   distributor.address,
+  // ]);
+  // await verifyContract(usdc.address, ["USDC Stable", "USDC"]);
+  // await verifyContract(xeq.address, ["0xEquity", "XEQ"]);
+
+  // CONFIGS-------------------------------------------------------
   await minter.setTeam(carol.address);
-  await velo.setMinter(minter.address);
+
+  await velo.addMinter(minter.address);
 
   await pairFactory.setPauser(teamMultisig.address);
 
@@ -157,7 +187,7 @@ async function deployContracts() {
   console.log("Depositor set");
 
   await voter.initialize(
-    [xeq.address, usdc.address, WETH.address],
+    [xeq.address, usdc.address, WETH.address, velo.address, jTRY.address],
     minter.address
   );
   console.log("Whitelist set");
@@ -169,11 +199,10 @@ async function deployContracts() {
   );
   console.log("veVELO distributed");
 
-  await verifyContract(velo.address, []);
+  await verifyContract(velo.address, ["0xEquity", "XEQ", 18]);
   await verifyContract(gaugeFactory.address, []);
   await verifyContract(bribeFactory.address, []);
   await verifyContract(pairFactory.address, []);
-  await verifyContract(WETH.address, ["Wrapped ETH", "WETH"]);
   await verifyContract(router.address, [pairFactory.address, WETH.address]);
   await verifyContract(artProxy.address, []);
   await verifyContract(escrow.address, [velo.address, artProxy.address]);
@@ -189,6 +218,7 @@ async function deployContracts() {
     escrow.address,
     distributor.address,
   ]);
+  await verifyContract(WETH.address, ["Wrapped ETH", "WETH"]);
   await verifyContract(usdc.address, ["USDC Stable", "USDC"]);
   await verifyContract(xeq.address, ["0xEquity", "XEQ"]);
 }

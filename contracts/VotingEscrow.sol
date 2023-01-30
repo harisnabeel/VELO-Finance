@@ -9,7 +9,7 @@ import {IVeArtProxy} from "./interfaces/IVeArtProxy.sol";
 import {IVotingEscrow} from "./interfaces/IVotingEscrow.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 
 /// @title Voting Escrow
 /// @notice veNFT implementation that escrows ERC-20 tokens in the form of an ERC-721 NFT

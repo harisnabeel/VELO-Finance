@@ -8,7 +8,7 @@ import "contracts/interfaces/IVelo.sol";
 import "contracts/interfaces/IVoter.sol";
 import "contracts/interfaces/IVotingEscrow.sol";
 
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 
 // codifies the minting rules as per ve(3,3), abstracted from the token to support any token that allows minting
 
@@ -134,13 +134,13 @@ contract Minter is IMinter {
             }
 
             require(_velo.transfer(team, _teamEmissions));
-            console.log(_growth, "_growth in minterrrrrrrrrrrrrrrrrrrrrr");
+            // console.log(_growth, "_growth in minterrrrrrrrrrrrrrrrrrrrrr");
             require(_velo.transfer(address(_rewards_distributor), _growth));
             _rewards_distributor.checkpoint_token(); // checkpoint token balance that was just minted in rewards distributor
             _rewards_distributor.checkpoint_total_supply(); // checkpoint supply
 
             _velo.approve(address(_voter), weekly);
-            console.log(weekly, "Weekly amount in minter");
+            // console.log(weekly, "Weekly amount in minter");
             _voter.notifyRewardAmount(weekly);
 
             emit Mint(

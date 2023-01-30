@@ -6,7 +6,7 @@ import "contracts/interfaces/IERC20.sol";
 import "contracts/interfaces/IRewardsDistributor.sol";
 import "contracts/interfaces/IVotingEscrow.sol";
 
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 
 /*
 
@@ -368,9 +368,9 @@ contract RewardsDistributor is IRewardsDistributor {
         uint256 _last_token_time = last_token_time;
         _last_token_time = (_last_token_time / WEEK) * WEEK;
         uint256 amount = _claim(_tokenId, voting_escrow, _last_token_time);
-        console.log(amount,"amount in reward disst");
+        // console.log(amount,"amount in reward disst");
         if (amount != 0) {
-            console.log("*************************");
+            // console.log("*************************");
             IVotingEscrow(voting_escrow).deposit_for(_tokenId, amount);
             token_last_balance -= amount;
         }
@@ -389,7 +389,7 @@ contract RewardsDistributor is IRewardsDistributor {
             if (_tokenId == 0) break;
             uint256 amount = _claim(_tokenId, _voting_escrow, _last_token_time);
             if (amount != 0) {
-                console.log("*************************");
+                // console.log("*************************");
 
                 IVotingEscrow(_voting_escrow).deposit_for(_tokenId, amount);
                 total += amount;

@@ -13,7 +13,7 @@ import "contracts/interfaces/IPairFactory.sol";
 import "contracts/interfaces/IVoter.sol";
 import "contracts/interfaces/IVotingEscrow.sol";
 
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 
 contract Voter is IVoter {
     address public immutable _ve; // the ve token that governs these contracts
@@ -372,10 +372,10 @@ contract Voter is IVoter {
     mapping(address => uint256) public claimable;
 
     function notifyRewardAmount(uint256 amount) external {
-        console.log(amount, "amount in voterrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
-        console.log(base, "velo voterrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+        // console.log(amount, "amount in voterrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+        // console.log(base, "velo voterrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
         _safeTransferFrom(base, msg.sender, address(this), amount); // transfer the distro in
-        console.log(totalWeight, "Total weight in voter");
+        // console.log(totalWeight, "Total weight in voter");
         uint256 _ratio = (amount * 1e18) / totalWeight; // 1e18 adjustment is removed during claim
         if (_ratio > 0) {
             index += _ratio;
@@ -480,7 +480,7 @@ contract Voter is IVoter {
         if (
             _claimable > IGauge(_gauge).left(base) && _claimable / DURATION > 0
         ) {
-            console.log("Inside if ig distrubute1");
+            // console.log("Inside if ig distrubute1");
             claimable[_gauge] = 0;
             IGauge(_gauge).notifyRewardAmount(base, _claimable);
             emit DistributeReward(msg.sender, _gauge, _claimable);

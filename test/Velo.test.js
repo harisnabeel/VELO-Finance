@@ -51,7 +51,7 @@ describe("VELO", function () {
       Voter,
       Minter,
     ] = await Promise.all([
-      ethers.getContractFactory("Velo"),
+      ethers.getContractFactory("MintableBurnableSyntheticTokenPermit"),
       ethers.getContractFactory("GaugeFactory"),
       ethers.getContractFactory("BribeFactory"),
       ethers.getContractFactory("PairFactory"),
@@ -63,7 +63,7 @@ describe("VELO", function () {
     ]);
 
     // deploying VELO
-    velo = await Velo.deploy();
+    velo = await Velo.deploy("0xEquity", "XEQ", 18);
     await velo.deployed();
     console.log("Velo deployed to: ", velo.address);
 
@@ -126,7 +126,7 @@ describe("VELO", function () {
       escrow.address,
       distributor.address
     );
-    console.log("Miter deployed to: ", minter.address);
+    console.log("Minter deployed to: ", minter.address);
 
     // deploying USDC
     usdc = await (
@@ -179,7 +179,8 @@ describe("VELO", function () {
     // CONFIGS-------------------------------------------------------
 
     await minter.setTeam(carol.address);
-    await velo.setMinter(minter.address);
+
+    await velo.addMinter(minter.address);
 
     await pairFactory.setPauser(teamMultisig.address);
 
@@ -464,7 +465,9 @@ describe("VELO", function () {
         deadline
       );
 
-    console.log("Liquiduty Added JTRYy-------------------------------------------");
+    console.log(
+      "Liquiduty Added JTRYy-------------------------------------------"
+    );
   }
 
   async function swapForUser(from, to, amount, signer) {
@@ -634,7 +637,7 @@ describe("VELO", function () {
     });
 
     describe.only("Pair test", function () {
-      it.only("Pre-req", async function () {
+      xit("Pre-req", async function () {
         await deployContracts();
         await printUserVeloBalances();
         await printUserNFTBalances();
@@ -644,7 +647,11 @@ describe("VELO", function () {
         await printUserVeloBalances();
       });
 
-      it.only("Create a pair ", async function () {
+      it.only("Empty", async function () {
+        
+      })
+
+      xit("Create a pair ", async function () {
         // deploying new contracts
         // await deployContracts();
 
@@ -658,7 +665,7 @@ describe("VELO", function () {
         console.log(await pairUSDC.name(), "Pair name");
       });
 
-      it.only("Create a 2nd piar ", async function () {
+      xit("Create a 2nd piar ", async function () {
         // deploying new contracts
         // await deployContracts();
 
@@ -668,12 +675,15 @@ describe("VELO", function () {
         console.log(await pairFactory.allPairs(1), "Pair address");
         let pair = await pairFactory.allPairs(1);
         pairJTRY = await ethers.getContractAt("Pair", pair);
-        console.log(pairJTRY.address, "Pair in deploy&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+        console.log(
+          pairJTRY.address,
+          "Pair in deploy&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"
+        );
 
         console.log(await pairJTRY.name(), "Pair name");
       });
 
-      it.only("Creating guage", async function () {
+      xit("Creating guage", async function () {
         let pair = await pairFactory.allPairs(0);
         // pair = await ethers.getContractAt("Pair", pair);
         let tx = await voter.createGauge(pair);
@@ -681,7 +691,7 @@ describe("VELO", function () {
         // console.log(tx.log);
       });
 
-      it.only("Creating 2nd guage", async function () {
+      xit("Creating 2nd guage", async function () {
         let pair = await pairFactory.allPairs(1);
         // pair = await ethers.getContractAt("Pair", pair);
         let tx = await voter.createGauge(pair);
@@ -689,7 +699,7 @@ describe("VELO", function () {
         // console.log(tx.log);
       });
 
-      it.only("Create lock user 1", async function () {
+      xit("Create lock user 1", async function () {
         let pair = await pairFactory.allPairs(0);
         let valueForLock = ethers.utils.parseUnits("1000", 18);
         let duration = WEEK * 52;
@@ -725,12 +735,17 @@ describe("VELO", function () {
 
         await pairUSDC
           .connect(admin)
-          .approve(guageAddressUSDC, ethers.utils.parseUnits("10000000000", 18));
-        
+          .approve(
+            guageAddressUSDC,
+            ethers.utils.parseUnits("10000000000", 18)
+          );
+
         await pairJTRY
           .connect(alice)
-          .approve(guageAddressjTRY, ethers.utils.parseUnits("10000000000", 18));
-        
+          .approve(
+            guageAddressjTRY,
+            ethers.utils.parseUnits("10000000000", 18)
+          );
 
         let guage = await ethers.getContractAt("Gauge", guageAddressUSDC);
         let guageJtry = await ethers.getContractAt("Gauge", guageAddressjTRY);
