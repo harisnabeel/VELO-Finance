@@ -10,8 +10,44 @@ import type {
 } from "../../../contracts/interfaces/IBribeFactory";
 
 const _abi = [
-  "function createExternalBribe(address[]) returns (address)",
-  "function createInternalBribe(address[]) returns (address)",
+  {
+    inputs: [
+      {
+        internalType: "address[]",
+        name: "",
+        type: "address[]",
+      },
+    ],
+    name: "createExternalBribe",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address[]",
+        name: "",
+        type: "address[]",
+      },
+    ],
+    name: "createInternalBribe",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ] as const;
 
 export class IBribeFactory__factory {

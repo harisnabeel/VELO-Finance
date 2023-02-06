@@ -7,14 +7,21 @@
         "type": "address"
       },
       {
-        "internalType": "address",
-        "name": "_internal_bribe",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_external_bribe",
-        "type": "address"
+        "components": [
+          {
+            "internalType": "address",
+            "name": "internalBribe",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "externalBribe",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct IBribeStruct.Bribes",
+        "name": "_bribes",
+        "type": "tuple"
       },
       {
         "internalType": "address",
@@ -30,6 +37,11 @@
         "internalType": "address[]",
         "name": "allowedRewards",
         "type": "address[]"
+      },
+      {
+        "internalType": "bool",
+        "name": "isDepositAllowed",
+        "type": "bool"
       }
     ],
     "name": "createGauge",

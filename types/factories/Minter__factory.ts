@@ -100,10 +100,10 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "_velo",
+    name: "_xeq",
     outputs: [
       {
-        internalType: "contract IVelo",
+        internalType: "contract Ixeq",
         name: "",
         type: "address",
       },

@@ -10,24 +10,355 @@ import type {
 } from "../../../contracts/interfaces/IVotingEscrow";
 
 const _abi = [
-  "function abstain(uint256)",
-  "function attach(uint256)",
-  "function balanceOfNFT(uint256) view returns (uint256)",
-  "function checkpoint()",
-  "function create_lock_for(uint256,uint256,address) returns (uint256)",
-  "function deposit_for(uint256,uint256)",
-  "function detach(uint256)",
-  "function epoch() view returns (uint256)",
-  "function isApprovedOrOwner(address,uint256) view returns (bool)",
-  "function ownerOf(uint256) view returns (address)",
-  "function point_history(uint256) view returns (tuple(int128,int128,uint256,uint256))",
-  "function team() returns (address)",
-  "function token() view returns (address)",
-  "function totalSupply() view returns (uint256)",
-  "function transferFrom(address,address,uint256)",
-  "function user_point_epoch(uint256) view returns (uint256)",
-  "function user_point_history(uint256,uint256) view returns (tuple(int128,int128,uint256,uint256))",
-  "function voting(uint256)",
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+    ],
+    name: "abstain",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+    ],
+    name: "attach",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "balanceOfNFT",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "checkpoint",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "create_lock_for",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "value",
+        type: "uint256",
+      },
+    ],
+    name: "deposit_for",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+    ],
+    name: "detach",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "epoch",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "isApprovedOrOwner",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "ownerOf",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "loc",
+        type: "uint256",
+      },
+    ],
+    name: "point_history",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "int128",
+            name: "bias",
+            type: "int128",
+          },
+          {
+            internalType: "int128",
+            name: "slope",
+            type: "int128",
+          },
+          {
+            internalType: "uint256",
+            name: "ts",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "blk",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct IVotingEscrow.Point",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "team",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "token",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "totalSupply",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "transferFrom",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+    ],
+    name: "user_point_epoch",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "loc",
+        type: "uint256",
+      },
+    ],
+    name: "user_point_history",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "int128",
+            name: "bias",
+            type: "int128",
+          },
+          {
+            internalType: "int128",
+            name: "slope",
+            type: "int128",
+          },
+          {
+            internalType: "uint256",
+            name: "ts",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "blk",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct IVotingEscrow.Point",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+    ],
+    name: "voting",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ] as const;
 
 export class IVotingEscrow__factory {

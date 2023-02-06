@@ -35,6 +35,11 @@
         "internalType": "address[]",
         "name": "_allowedRewardTokens",
         "type": "address[]"
+      },
+      {
+        "internalType": "bool",
+        "name": "_isDepositAllowed",
+        "type": "bool"
       }
     ],
     "stateMutability": "nonpayable",

@@ -4,27 +4,163 @@
 
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
-import type {
-  IVelo,
-  IVeloInterface,
-} from "../../../contracts/interfaces/IVelo";
+import type { Ixeq, IxeqInterface } from "../../../contracts/interfaces/Ixeq";
 
 const _abi = [
-  "function approve(address,uint256) returns (bool)",
-  "function balanceOf(address) view returns (uint256)",
-  "function mint(address,uint256) returns (bool)",
-  "function minter() returns (address)",
-  "function totalSupply() view returns (uint256)",
-  "function transfer(address,uint256) returns (bool)",
-  "function transferFrom(address,address,uint256) returns (bool)",
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "spender",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "value",
+        type: "uint256",
+      },
+    ],
+    name: "approve",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "balanceOf",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "mint",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "minter",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "totalSupply",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "transfer",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "transferFrom",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ] as const;
 
-export class IVelo__factory {
+export class Ixeq__factory {
   static readonly abi = _abi;
-  static createInterface(): IVeloInterface {
-    return new utils.Interface(_abi) as IVeloInterface;
+  static createInterface(): IxeqInterface {
+    return new utils.Interface(_abi) as IxeqInterface;
   }
-  static connect(address: string, signerOrProvider: Signer | Provider): IVelo {
-    return new Contract(address, _abi, signerOrProvider) as IVelo;
+  static connect(address: string, signerOrProvider: Signer | Provider): Ixeq {
+    return new Contract(address, _abi, signerOrProvider) as Ixeq;
   }
 }

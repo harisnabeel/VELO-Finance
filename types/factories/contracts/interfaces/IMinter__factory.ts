@@ -9,7 +9,21 @@ import type {
   IMinterInterface,
 } from "../../../contracts/interfaces/IMinter";
 
-const _abi = ["function update_period() returns (uint256)"] as const;
+const _abi = [
+  {
+    inputs: [],
+    name: "update_period",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+] as const;
 
 export class IMinter__factory {
   static readonly abi = _abi;

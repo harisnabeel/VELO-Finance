@@ -10,8 +10,20 @@ import type {
 } from "../../../contracts/interfaces/IRewardsDistributor";
 
 const _abi = [
-  "function checkpoint_token()",
-  "function checkpoint_total_supply()",
+  {
+    inputs: [],
+    name: "checkpoint_token",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "checkpoint_total_supply",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ] as const;
 
 export class IRewardsDistributor__factory {

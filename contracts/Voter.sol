@@ -11,6 +11,7 @@ import "contracts/interfaces/IMinter.sol";
 import "contracts/interfaces/IPair.sol";
 import "contracts/interfaces/IPairFactory.sol";
 import "contracts/interfaces/IVoter.sol";
+import "contracts/interfaces/IBribeStruct.sol";
 import "contracts/interfaces/IVotingEscrow.sol";
 
 // import "hardhat/console.sol";
@@ -255,7 +256,10 @@ contract Voter is IVoter {
         emit Whitelisted(msg.sender, _token);
     }
 
-    function createGauge(address _pool) external returns (address) {
+    function createGauge(address _pool, bool _isDepositAllowed)
+        external
+        returns (address)
+    {
         require(gauges[_pool] == address(0x0), "exists");
         address[] memory allowedRewards = new address[](3);
         address[] memory internalRewards = new address[](2);
@@ -276,7 +280,7 @@ contract Voter is IVoter {
         }
 
         if (msg.sender != governor) {
-            // gov can create for any pool, even non-Velodrome pairs
+            // gov can create for any pool, even non-xeqdrome pairs
             require(isPair, "!_pool");
             require(
                 isWhitelisted[tokenA] && isWhitelisted[tokenB],
@@ -284,22 +288,23 @@ contract Voter is IVoter {
             );
         }
 
-        address _internal_bribe = IBribeFactory(bribefactory)
-            .createInternalBribe(internalRewards);
-        address _external_bribe = IBribeFactory(bribefactory)
-            .createExternalBribe(allowedRewards);
+        IBribeStruct.Bribes memory _bribes;
+
+        _bribes.internalBribe = _createInternalBribe(internalRewards);
+        _bribes.externalBribe = _createExternalBribe(allowedRewards);
+
         address _gauge = IGaugeFactory(gaugefactory).createGauge(
             _pool,
-            _internal_bribe,
-            _external_bribe,
+            _bribes,
             _ve,
             isPair,
-            allowedRewards
+            allowedRewards,
+            _isDepositAllowed
         );
 
         IERC20(base).approve(_gauge, type(uint256).max);
-        internal_bribes[_gauge] = _internal_bribe;
-        external_bribes[_gauge] = _external_bribe;
+        internal_bribes[_gauge] = _bribes.internalBribe;
+        external_bribes[_gauge] = _bribes.externalBribe;
         gauges[_pool] = _gauge;
         poolForGauge[_gauge] = _pool;
         isGauge[_gauge] = true;
@@ -309,12 +314,32 @@ contract Voter is IVoter {
         emit GaugeCreated(
             _gauge,
             msg.sender,
-            _internal_bribe,
-            _external_bribe,
+            _bribes.internalBribe,
+            _bribes.externalBribe,
             _pool
         );
         return _gauge;
     }
+
+    function _createInternalBribe(address[] memory _internalRewards)
+        internal
+        returns (address internalBribe)
+    {
+        internalBribe = IBribeFactory(bribefactory).createInternalBribe(
+            _internalRewards
+        );
+    }
+
+    function _createExternalBribe(address[] memory _allowedRewards)
+        internal
+        returns (address externalBribe)
+    {
+        externalBribe = IBribeFactory(bribefactory).createExternalBribe(
+            _allowedRewards
+        );
+    }
+
+    function governorCheck() internal {}
 
     function killGauge(address _gauge) external {
         require(msg.sender == emergencyCouncil, "not emergency council");
@@ -373,7 +398,7 @@ contract Voter is IVoter {
 
     function notifyRewardAmount(uint256 amount) external {
         // console.log(amount, "amount in voterrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
-        // console.log(base, "velo voterrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+        // console.log(base, "xeq voterrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
         _safeTransferFrom(base, msg.sender, address(this), amount); // transfer the distro in
         // console.log(totalWeight, "Total weight in voter");
         uint256 _ratio = (amount * 1e18) / totalWeight; // 1e18 adjustment is removed during claim

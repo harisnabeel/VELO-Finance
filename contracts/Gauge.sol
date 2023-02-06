@@ -8,6 +8,7 @@ import "contracts/interfaces/IGauge.sol";
 import "contracts/interfaces/IPair.sol";
 import "contracts/interfaces/IVoter.sol";
 import "contracts/interfaces/IVotingEscrow.sol";
+
 // import "hardhat/console.sol";
 
 // Gauges are used to incentivize pools, they emit reward tokens over 7 days for staked LP tokens
@@ -77,6 +78,9 @@ contract Gauge is IGauge {
     /// @notice The number of checkpoints for each token
     mapping(address => uint256) public rewardPerTokenNumCheckpoints;
 
+    // when true means the reward will go to guage, when false means the reward will directly go to the PAIR contract/EOA
+    bool isDepositAllowed;
+
     uint256 public fees0;
     uint256 public fees1;
 
@@ -101,7 +105,8 @@ contract Gauge is IGauge {
         address __ve,
         address _voter,
         bool _forPair,
-        address[] memory _allowedRewardTokens
+        address[] memory _allowedRewardTokens,
+        bool _isDepositAllowed
     ) {
         stake = _stake;
         internal_bribe = _internal_bribe;
@@ -116,6 +121,8 @@ contract Gauge is IGauge {
                 rewards.push(_allowedRewardTokens[i]);
             }
         }
+
+        isDepositAllowed = _isDepositAllowed;
     }
 
     // simple re-entrancy check
@@ -621,7 +628,6 @@ contract Gauge is IGauge {
         }
         // console.log("CP5 in guage earned***********************************************");
 
-
         Checkpoint memory cp = checkpoints[account][_endIndex];
         (uint256 _rewardPerTokenStored, ) = getPriorRewardPerToken(
             token,
@@ -765,9 +771,11 @@ contract Gauge is IGauge {
             // );
             // console.log(
             //     IERC20(token).balanceOf(msg.sender),
-            //     "Balane of voterof velo in guague-----------------"
+            //     "Balane of voterof xeq in guague-----------------"
             // );
-            _safeTransferFrom(token, msg.sender, address(this), amount);
+            isDepositAllowed
+                ? _safeTransferFrom(token, msg.sender, address(this), amount)
+                : _safeTransferFrom(token, msg.sender, stake, amount);
             rewardRate[token] = amount / DURATION;
         } else {
             // console.log(
@@ -785,21 +793,27 @@ contract Gauge is IGauge {
             // );
             // console.log(
             //     IERC20(token).balanceOf(msg.sender),
-            //     "Balane of voterof velo in guague-----------------"
+            //     "Balane of voterof xeq in guague-----------------"
             // );
 
             uint256 _remaining = periodFinish[token] - block.timestamp;
             uint256 _left = _remaining * rewardRate[token];
             require(amount > _left);
-            _safeTransferFrom(token, msg.sender, address(this), amount);
+            isDepositAllowed
+                ? _safeTransferFrom(token, msg.sender, address(this), amount)
+                : _safeTransferFrom(token, msg.sender, stake, amount);
             rewardRate[token] = (amount + _left) / DURATION;
         }
         require(rewardRate[token] > 0);
-        uint256 balance = IERC20(token).balanceOf(address(this));
-        require(
-            rewardRate[token] <= balance / DURATION,
-            "Provided reward too high"
-        );
+
+        if (isDepositAllowed) {
+            uint256 balance = IERC20(token).balanceOf(address(this));
+            require(
+                rewardRate[token] <= balance / DURATION,
+                "Provided reward too high"
+            );
+        }
+
         periodFinish[token] = block.timestamp + DURATION;
         if (!isReward[token]) {
             isReward[token] = true;

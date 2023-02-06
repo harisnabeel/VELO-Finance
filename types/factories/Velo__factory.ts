@@ -4,7 +4,7 @@
 
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
-import type { Velo, VeloInterface } from "../Velo";
+import type { xeq, xeqInterface } from "../xeq";
 
 const _abi = [
   {
@@ -338,12 +338,12 @@ const _abi = [
   },
 ] as const;
 
-export class Velo__factory {
+export class xeq__factory {
   static readonly abi = _abi;
-  static createInterface(): VeloInterface {
-    return new utils.Interface(_abi) as VeloInterface;
+  static createInterface(): xeqInterface {
+    return new utils.Interface(_abi) as xeqInterface;
   }
-  static connect(address: string, signerOrProvider: Signer | Provider): Velo {
-    return new Contract(address, _abi, signerOrProvider) as Velo;
+  static connect(address: string, signerOrProvider: Signer | Provider): xeq {
+    return new Contract(address, _abi, signerOrProvider) as xeq;
   }
 }

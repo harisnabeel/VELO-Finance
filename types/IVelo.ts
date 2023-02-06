@@ -23,7 +23,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface IVeloInterface extends utils.Interface {
+export interface IxeqInterface extends utils.Interface {
   functions: {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
@@ -92,12 +92,12 @@ export interface IVeloInterface extends utils.Interface {
   events: {};
 }
 
-export interface IVelo extends BaseContract {
+export interface Ixeq extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: IVeloInterface;
+  interface: IxeqInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

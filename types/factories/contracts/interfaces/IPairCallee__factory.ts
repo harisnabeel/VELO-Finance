@@ -9,7 +9,36 @@ import type {
   IPairCalleeInterface,
 } from "../../../contracts/interfaces/IPairCallee";
 
-const _abi = ["function hook(address,uint256,uint256,bytes)"] as const;
+const _abi = [
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "sender",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "amount0",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "amount1",
+        type: "uint256",
+      },
+      {
+        internalType: "bytes",
+        name: "data",
+        type: "bytes",
+      },
+    ],
+    name: "hook",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+] as const;
 
 export class IPairCallee__factory {
   static readonly abi = _abi;

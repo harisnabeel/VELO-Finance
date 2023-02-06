@@ -446,6 +446,11 @@
         "internalType": "address",
         "name": "_pool",
         "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "_isDepositAllowed",
+        "type": "bool"
       }
     ],
     "name": "createGauge",
@@ -524,6 +529,32 @@
   {
     "inputs": [],
     "name": "distribute",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_gauge",
+        "type": "address"
+      }
+    ],
+    "name": "distribute1",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "_gauges",
+        "type": "address[]"
+      }
+    ],
+    "name": "distribute2",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

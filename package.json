@@ -1,5 +1,5 @@
 {
-  "name": "velo",
+  "name": "xeq",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -36,8 +36,10 @@
     "@jarvisnetwork/core-sdk": "^0.1.43",
     "@openzeppelin/contracts": "^4.8.1",
     "bignumber.js": "^9.1.1",
+    "clones-with-immutable-args": "^1.0.0",
     "dotenv": "^16.0.3",
     "hardhat-contract-sizer": "^2.7.0",
-    "hardhat-tracer": "^1.2.1"
+    "hardhat-tracer": "^1.2.1",
+    "solmate": "^6.7.0"
   }
 }

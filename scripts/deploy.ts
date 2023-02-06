@@ -15,6 +15,7 @@ import {
   VeArtProxy,
   Voter,
   Minter,
+  ERC4626StakingPool,
 } from "../types";
 
 // global scope, and execute the script.
@@ -256,6 +257,17 @@ async function main() {
     "\n"
   );
 
+  // -------------------------DEPLOYING ERC4626-------------------------------------------------//
+
+  const jUSDC = await _deploy("Mockerc20", "jUSDC", "jUSDC");  // TODO : to be removed, just for test
+
+  const erc4626StakingPool = await _deploy(
+    "ERC4626StakingPool",
+    admin.address,
+    velo.address,
+    jUSDC.address
+  );
+
   // CONFIGS-------------------------------------------------------
 
   await minter.setTeam(carol.address);
@@ -279,7 +291,12 @@ async function main() {
   console.log("Depositor set");
 
   await voter.initialize(
-    [velo.address, "0xaEbf6850CeA7142382CAE2d84451bDAaCbBb79F7", weth.address,"0x5bcaac3B1F8b21D9727B6B0541bdf5d5E66B205c"],
+    [
+      velo.address,
+      "0xaEbf6850CeA7142382CAE2d84451bDAaCbBb79F7",
+      weth.address,
+      "0x5bcaac3B1F8b21D9727B6B0541bdf5d5E66B205c",
+    ],
     minter.address
   );
   console.log("Whitelist set");

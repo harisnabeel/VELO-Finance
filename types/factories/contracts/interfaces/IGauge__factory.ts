@@ -10,11 +10,92 @@ import type {
 } from "../../../contracts/interfaces/IGauge";
 
 const _abi = [
-  "function claimFees() returns (uint256, uint256)",
-  "function getReward(address,address[])",
-  "function isForPair() view returns (bool)",
-  "function left(address) view returns (uint256)",
-  "function notifyRewardAmount(address,uint256)",
+  {
+    inputs: [],
+    name: "claimFees",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "claimed0",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "claimed1",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+      {
+        internalType: "address[]",
+        name: "tokens",
+        type: "address[]",
+      },
+    ],
+    name: "getReward",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "isForPair",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "token",
+        type: "address",
+      },
+    ],
+    name: "left",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "token",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "notifyRewardAmount",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ] as const;
 
 export class IGauge__factory {

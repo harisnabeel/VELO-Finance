@@ -10,7 +10,40 @@ import type {
 } from "../../../contracts/interfaces/IVeArtProxy";
 
 const _abi = [
-  "function _tokenURI(uint256,uint256,uint256,uint256) pure returns (string)",
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_tokenId",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_balanceOf",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_locked_end",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_value",
+        type: "uint256",
+      },
+    ],
+    name: "_tokenURI",
+    outputs: [
+      {
+        internalType: "string",
+        name: "output",
+        type: "string",
+      },
+    ],
+    stateMutability: "pure",
+    type: "function",
+  },
 ] as const;
 
 export class IVeArtProxy__factory {

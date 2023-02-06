@@ -7,14 +7,21 @@
         "type": "address"
       },
       {
-        "internalType": "address",
+        "components": [
+          {
+            "internalType": "address",
+            "name": "internalBribe",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "externalBribe",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct IBribeStruct.Bribes",
         "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
+        "type": "tuple"
       },
       {
         "internalType": "address",
@@ -30,6 +37,11 @@
         "internalType": "address[]",
         "name": "",
         "type": "address[]"
+      },
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "name": "createGauge",

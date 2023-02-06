@@ -32,7 +32,7 @@ export interface MinterInterface extends utils.Interface {
     "MAX_TEAM_RATE()": FunctionFragment;
     "_rewards_distributor()": FunctionFragment;
     "_ve()": FunctionFragment;
-    "_velo()": FunctionFragment;
+    "_xeq()": FunctionFragment;
     "_voter()": FunctionFragment;
     "acceptTeam()": FunctionFragment;
     "active_period()": FunctionFragment;
@@ -56,7 +56,7 @@ export interface MinterInterface extends utils.Interface {
       | "MAX_TEAM_RATE"
       | "_rewards_distributor"
       | "_ve"
-      | "_velo"
+      | "_xeq"
       | "_voter"
       | "acceptTeam"
       | "active_period"
@@ -84,7 +84,7 @@ export interface MinterInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "_ve", values?: undefined): string;
-  encodeFunctionData(functionFragment: "_velo", values?: undefined): string;
+  encodeFunctionData(functionFragment: "_xeq", values?: undefined): string;
   encodeFunctionData(functionFragment: "_voter", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "acceptTeam",
@@ -151,7 +151,7 @@ export interface MinterInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_ve", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "_velo", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "_xeq", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_voter", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "acceptTeam", data: BytesLike): Result;
   decodeFunctionResult(
@@ -249,7 +249,7 @@ export interface Minter extends BaseContract {
 
     _ve(overrides?: CallOverrides): Promise<[string]>;
 
-    _velo(overrides?: CallOverrides): Promise<[string]>;
+    _xeq(overrides?: CallOverrides): Promise<[string]>;
 
     _voter(overrides?: CallOverrides): Promise<[string]>;
 
@@ -308,7 +308,7 @@ export interface Minter extends BaseContract {
 
   _ve(overrides?: CallOverrides): Promise<string>;
 
-  _velo(overrides?: CallOverrides): Promise<string>;
+  _xeq(overrides?: CallOverrides): Promise<string>;
 
   _voter(overrides?: CallOverrides): Promise<string>;
 
@@ -367,7 +367,7 @@ export interface Minter extends BaseContract {
 
     _ve(overrides?: CallOverrides): Promise<string>;
 
-    _velo(overrides?: CallOverrides): Promise<string>;
+    _xeq(overrides?: CallOverrides): Promise<string>;
 
     _voter(overrides?: CallOverrides): Promise<string>;
 
@@ -438,7 +438,7 @@ export interface Minter extends BaseContract {
 
     _ve(overrides?: CallOverrides): Promise<BigNumber>;
 
-    _velo(overrides?: CallOverrides): Promise<BigNumber>;
+    _xeq(overrides?: CallOverrides): Promise<BigNumber>;
 
     _voter(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -500,7 +500,7 @@ export interface Minter extends BaseContract {
 
     _ve(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    _velo(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    _xeq(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     _voter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

@@ -10,7 +10,35 @@ import type {
 } from "../../../contracts/interfaces/IRouter";
 
 const _abi = [
-  "function pairFor(address,address,bool) view returns (address)",
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "tokenA",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "tokenB",
+        type: "address",
+      },
+      {
+        internalType: "bool",
+        name: "stable",
+        type: "bool",
+      },
+    ],
+    name: "pairFor",
+    outputs: [
+      {
+        internalType: "address",
+        name: "pair",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
 ] as const;
 
 export class IRouter__factory {

@@ -10,8 +10,63 @@ import type {
 } from "../../../contracts/factories/GaugeFactory";
 
 const _abi = [
-  "function createGauge(address,address,address,address,bool,address[]) returns (address)",
-  "function last_gauge() view returns (address)",
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_pool",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_internal_bribe",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_external_bribe",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_ve",
+        type: "address",
+      },
+      {
+        internalType: "bool",
+        name: "isPair",
+        type: "bool",
+      },
+      {
+        internalType: "address[]",
+        name: "allowedRewards",
+        type: "address[]",
+      },
+    ],
+    name: "createGauge",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "last_gauge",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
 ] as const;
 
 export class GaugeFactory__factory {

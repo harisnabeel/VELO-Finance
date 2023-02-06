@@ -4,7 +4,7 @@
 
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
-import type { IVelo, IVeloInterface } from "../IVelo";
+import type { Ixeq, IxeqInterface } from "../Ixeq";
 
 const _abi = [
   {
@@ -155,12 +155,12 @@ const _abi = [
   },
 ] as const;
 
-export class IVelo__factory {
+export class Ixeq__factory {
   static readonly abi = _abi;
-  static createInterface(): IVeloInterface {
-    return new utils.Interface(_abi) as IVeloInterface;
+  static createInterface(): IxeqInterface {
+    return new utils.Interface(_abi) as IxeqInterface;
   }
-  static connect(address: string, signerOrProvider: Signer | Provider): IVelo {
-    return new Contract(address, _abi, signerOrProvider) as IVelo;
+  static connect(address: string, signerOrProvider: Signer | Provider): Ixeq {
+    return new Contract(address, _abi, signerOrProvider) as Ixeq;
   }
 }

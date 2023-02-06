@@ -8,7 +8,7 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 const { verifyContract } = require("./../scripts/utils/verfierHelper");
 
-let velo,
+let xeq,
   gaugeFactory,
   artProxy,
   escrow,
@@ -31,7 +31,7 @@ async function deployContracts() {
     await ethers.getSigners();
   // Load
   const [
-    Velo,
+    xeq,
     GaugeFactory,
     BribeFactory,
     PairFactory,
@@ -52,10 +52,10 @@ async function deployContracts() {
     ethers.getContractFactory("Minter"),
   ]);
 
-  // deploying VELO
-  velo = await Velo.deploy("0xEquity", "XEQ", 18);
-  await velo.deployed();
-  console.log("Velo deployed to: ", velo.address);
+  // deploying xeq
+  xeq = await xeq.deploy("0xEquity", "XEQ", 18);
+  await xeq.deployed();
+  console.log("xeq deployed to: ", xeq.address);
 
   // deploying GaugeFactory
   gaugeFactory = await GaugeFactory.deploy(); // creates gauges (distributes rewards to Liq pools)
@@ -92,10 +92,10 @@ async function deployContracts() {
   console.log("VeArtProxy deployed to: ", artProxy.address);
 
   // deploying Voting Escro
-  escrow = await VotingEscrow.deploy(velo.address, artProxy.address);
+  escrow = await VotingEscrow.deploy(xeq.address, artProxy.address);
   await escrow.deployed();
   console.log("VotingEscrow deployed to: ", escrow.address);
-  // console.log("Args: ", velo.address, artProxy.address, "\n");
+  // console.log("Args: ", xeq.address, artProxy.address, "\n");
 
   // now deploying reward distribution
   distributor = await RewardsDistributor.deploy(escrow.address);
@@ -141,14 +141,14 @@ async function deployContracts() {
 
   console.log(jTRY.address, "jTRY is deployed at: ");
 
-  // await verifyContract(velo.address, []);
+  // await verifyContract(xeq.address, []);
   // await verifyContract(gaugeFactory.address, []);
   // await verifyContract(bribeFactory.address, []);
   // await verifyContract(pairFactory.address, []);
   // await verifyContract(WETH.address, ["Wrapped ETH", "WETH"]);
   // await verifyContract(router.address, [pairFactory.address, WETH.address]);
   // await verifyContract(artProxy.address, []);
-  // await verifyContract(escrow.address, [velo.address, artProxy.address]);
+  // await verifyContract(escrow.address, [xeq.address, artProxy.address]);
   // await verifyContract(distributor.address, [escrow.address]);
   // await verifyContract(voter.address, [
   //   escrow.address,
@@ -167,7 +167,7 @@ async function deployContracts() {
   // CONFIGS-------------------------------------------------------
   await minter.setTeam(carol.address);
 
-  await velo.addMinter(minter.address);
+  await xeq.addMinter(minter.address);
 
   await pairFactory.setPauser(teamMultisig.address);
 
@@ -187,7 +187,7 @@ async function deployContracts() {
   console.log("Depositor set");
 
   await voter.initialize(
-    [xeq.address, usdc.address, WETH.address, velo.address, jTRY.address],
+    [xeq.address, usdc.address, WETH.address, xeq.address, jTRY.address],
     minter.address
   );
   console.log("Whitelist set");
@@ -197,15 +197,15 @@ async function deployContracts() {
     [ethers.utils.parseUnits("10000", 18), ethers.utils.parseUnits("5000", 18)],
     ethers.utils.parseUnits("15000", 18)
   );
-  console.log("veVELO distributed");
+  console.log("vexeq distributed");
 
-  await verifyContract(velo.address, ["0xEquity", "XEQ", 18]);
+  await verifyContract(xeq.address, ["0xEquity", "XEQ", 18]);
   await verifyContract(gaugeFactory.address, []);
   await verifyContract(bribeFactory.address, []);
   await verifyContract(pairFactory.address, []);
   await verifyContract(router.address, [pairFactory.address, WETH.address]);
   await verifyContract(artProxy.address, []);
-  await verifyContract(escrow.address, [velo.address, artProxy.address]);
+  await verifyContract(escrow.address, [xeq.address, artProxy.address]);
   await verifyContract(distributor.address, [escrow.address]);
   await verifyContract(voter.address, [
     escrow.address,

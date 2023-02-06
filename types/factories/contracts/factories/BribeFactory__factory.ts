@@ -10,10 +10,70 @@ import type {
 } from "../../../contracts/factories/BribeFactory";
 
 const _abi = [
-  "function createExternalBribe(address[]) returns (address)",
-  "function createInternalBribe(address[]) returns (address)",
-  "function last_external_bribe() view returns (address)",
-  "function last_internal_bribe() view returns (address)",
+  {
+    inputs: [
+      {
+        internalType: "address[]",
+        name: "allowedRewards",
+        type: "address[]",
+      },
+    ],
+    name: "createExternalBribe",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address[]",
+        name: "allowedRewards",
+        type: "address[]",
+      },
+    ],
+    name: "createInternalBribe",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "last_external_bribe",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "last_internal_bribe",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
 ] as const;
 
 export class BribeFactory__factory {

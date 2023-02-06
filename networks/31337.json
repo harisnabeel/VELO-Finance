@@ -292,5 +292,220 @@
       "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
       "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6"
     ]
+  },
+  {
+    "contractName": "MintableBurnableSyntheticTokenPermit",
+    "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+    "transactionHash": "0xdcf5f2bcef72ad83476870cca9a8a43f208632821eb711080bccca5335d4adb6",
+    "args": [
+      "0xEquity",
+      "XEQ",
+      18
+    ]
+  },
+  {
+    "contractName": "GaugeFactory",
+    "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+    "transactionHash": "0xa4b6d5595d419e3c0763321eb2900fa9e1021200d0aff0bb43534b173dfe5ab0",
+    "args": [
+      null
+    ]
+  },
+  {
+    "contractName": "BribeFactory",
+    "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+    "transactionHash": "0x982d2370c43a52c7044841988311bcd6b4c60c7fc039191b19b21df4c5a024cd",
+    "args": [
+      null
+    ]
+  },
+  {
+    "contractName": "PairFactory",
+    "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+    "transactionHash": "0xfbe92eb7af1aa8cf7887cd256dce7ed9746d4efc19989b011be3ecb66bb6fdd8",
+    "args": [
+      null
+    ]
+  },
+  {
+    "contractName": "Mockerc20",
+    "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+    "transactionHash": "0xe227d540ff6c3cd58c1e2972c94d75913b2da713a12bc5cbdfccfbdcb688daf3",
+    "args": [
+      "Wrapped ETH",
+      "WETH"
+    ]
+  },
+  {
+    "contractName": "Router",
+    "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+    "transactionHash": "0xa6458b18e2d7ab0f3811e6d980aa3e6ce972c1a13355f23a0f8ac1ab42886df5",
+    "args": [
+      "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+      "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9"
+    ]
+  },
+  {
+    "contractName": "VeArtProxy",
+    "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
+    "transactionHash": "0xa560d1c11a3161866a93d403df0307548393f86889ca02631a45135737c305ec",
+    "args": [
+      null
+    ]
+  },
+  {
+    "contractName": "VotingEscrow",
+    "address": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+    "transactionHash": "0xb4dcac2cad1337ebfb061580e27a73a25f0d0cc4d7278ef757d0870076da2bc6",
+    "args": [
+      "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      "0x0165878A594ca255338adfa4d48449f69242Eb8F"
+    ]
+  },
+  {
+    "contractName": "RewardsDistributor",
+    "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+    "transactionHash": "0x5c4610beb7cae832c6c44298814b5c220d528b674b96e79386e22f539992ca3b",
+    "args": [
+      "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853"
+    ]
+  },
+  {
+    "contractName": "Voter",
+    "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
+    "transactionHash": "0x0bab9f6ccc23136f2ce9b939432b20ba64bc4e808fb077aa7b953ded37234c3c",
+    "args": [
+      "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+      "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+      "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
+    ]
+  },
+  {
+    "contractName": "Minter",
+    "address": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
+    "transactionHash": "0xa24e64a66c228ae8c8e1fcbb90f024196229ad3d448be1a2fd4ce8881c1c4ea7",
+    "args": [
+      "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
+      "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+      "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6"
+    ]
+  },
+  {
+    "contractName": "MintableBurnableSyntheticTokenPermit",
+    "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+    "transactionHash": "0xdcf5f2bcef72ad83476870cca9a8a43f208632821eb711080bccca5335d4adb6",
+    "args": [
+      "0xEquity",
+      "XEQ",
+      18
+    ]
+  },
+  {
+    "contractName": "GaugeFactory",
+    "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+    "transactionHash": "0xa4b6d5595d419e3c0763321eb2900fa9e1021200d0aff0bb43534b173dfe5ab0",
+    "args": [
+      null
+    ]
+  },
+  {
+    "contractName": "BribeFactory",
+    "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+    "transactionHash": "0x982d2370c43a52c7044841988311bcd6b4c60c7fc039191b19b21df4c5a024cd",
+    "args": [
+      null
+    ]
+  },
+  {
+    "contractName": "PairFactory",
+    "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+    "transactionHash": "0xfbe92eb7af1aa8cf7887cd256dce7ed9746d4efc19989b011be3ecb66bb6fdd8",
+    "args": [
+      null
+    ]
+  },
+  {
+    "contractName": "Mockerc20",
+    "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+    "transactionHash": "0xe227d540ff6c3cd58c1e2972c94d75913b2da713a12bc5cbdfccfbdcb688daf3",
+    "args": [
+      "Wrapped ETH",
+      "WETH"
+    ]
+  },
+  {
+    "contractName": "Router",
+    "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+    "transactionHash": "0xa6458b18e2d7ab0f3811e6d980aa3e6ce972c1a13355f23a0f8ac1ab42886df5",
+    "args": [
+      "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+      "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9"
+    ]
+  },
+  {
+    "contractName": "VeArtProxy",
+    "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
+    "transactionHash": "0xa560d1c11a3161866a93d403df0307548393f86889ca02631a45135737c305ec",
+    "args": [
+      null
+    ]
+  },
+  {
+    "contractName": "VotingEscrow",
+    "address": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+    "transactionHash": "0xb4dcac2cad1337ebfb061580e27a73a25f0d0cc4d7278ef757d0870076da2bc6",
+    "args": [
+      "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      "0x0165878A594ca255338adfa4d48449f69242Eb8F"
+    ]
+  },
+  {
+    "contractName": "RewardsDistributor",
+    "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+    "transactionHash": "0x5c4610beb7cae832c6c44298814b5c220d528b674b96e79386e22f539992ca3b",
+    "args": [
+      "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853"
+    ]
+  },
+  {
+    "contractName": "Voter",
+    "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
+    "transactionHash": "0x0bab9f6ccc23136f2ce9b939432b20ba64bc4e808fb077aa7b953ded37234c3c",
+    "args": [
+      "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+      "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+      "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
+    ]
+  },
+  {
+    "contractName": "Minter",
+    "address": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
+    "transactionHash": "0xa24e64a66c228ae8c8e1fcbb90f024196229ad3d448be1a2fd4ce8881c1c4ea7",
+    "args": [
+      "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
+      "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+      "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6"
+    ]
+  },
+  {
+    "contractName": "Mockerc20",
+    "address": "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e",
+    "transactionHash": "0x7183cba9768abe152430dd11a5ff0a1e4a3cd817f0ab817a22b39ed3355608d8",
+    "args": [
+      "jUSDC",
+      "jUSDC"
+    ]
+  },
+  {
+    "contractName": "ERC4626StakingPool",
+    "address": "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0",
+    "transactionHash": "0xdf1a6b2f517190bdf9d21543c3546451e0809f95c78320b9a080c871c939d6d6",
+    "args": [
+      "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e"
+    ]
   }
 ]

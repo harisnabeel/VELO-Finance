@@ -10,11 +10,109 @@ import type {
 } from "../../../contracts/interfaces/IPairFactory";
 
 const _abi = [
-  "function allPairsLength() view returns (uint256)",
-  "function createPair(address,address,bool) returns (address)",
-  "function getPair(address,address,bool) view returns (address)",
-  "function isPair(address) view returns (bool)",
-  "function pairCodeHash() pure returns (bytes32)",
+  {
+    inputs: [],
+    name: "allPairsLength",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "tokenA",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "tokenB",
+        type: "address",
+      },
+      {
+        internalType: "bool",
+        name: "stable",
+        type: "bool",
+      },
+    ],
+    name: "createPair",
+    outputs: [
+      {
+        internalType: "address",
+        name: "pair",
+        type: "address",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "tokenA",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "token",
+        type: "address",
+      },
+      {
+        internalType: "bool",
+        name: "stable",
+        type: "bool",
+      },
+    ],
+    name: "getPair",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "pair",
+        type: "address",
+      },
+    ],
+    name: "isPair",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "pairCodeHash",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "pure",
+    type: "function",
+  },
 ] as const;
 
 export class IPairFactory__factory {

@@ -24,7 +24,8 @@ let velo,
   jTRY,
   xequsdPair,
   pairUSDC,
-  pairJTRY;
+  pairJTRY,
+  stakingPoolErc4626;
 let admin, alice, bob, carol, teamMultisig, asim1, asim2;
 const WEEK = 604800;
 const valueToTransfer = ethers.utils.parseUnits("3000", 18);
@@ -152,6 +153,13 @@ describe("VELO", function () {
     ).deployed();
 
     console.log(jTRY.address, "jTRY is deployed at: ");
+
+    stakingPoolErc4626 = await (
+      await (
+        await ethers.getContractFactory("ERC4626StakingPool")
+      ).deploy(admin.address, velo.address, jTRY.address)
+    ).deployed();
+
 
     // await verifyContract(velo.address, []);
     // await verifyContract(gaugeFactory.address, []);
@@ -647,9 +655,7 @@ describe("VELO", function () {
         await printUserVeloBalances();
       });
 
-      it.only("Empty", async function () {
-        
-      })
+      it.only("Empty", async function () {});
 
       xit("Create a pair ", async function () {
         // deploying new contracts
@@ -1043,6 +1049,85 @@ describe("VELO", function () {
         console.log(await escrow.balanceOfNFT(2), "Balance of NFT 2 after");
 
         // now distriuting the fees
+      });
+    });
+
+    describe.only("POOL TEST", function () {
+      it("Pre-req", async function () {
+        await deployContracts();
+        await distributeVelo();
+      });
+
+      it("Create guage for POOL", async function () {
+        await voter
+          .connect(carol)
+          .createGauge(stakingPoolErc4626.address, true);
+      });
+      it("Create guage for EOA", async function () {
+        await voter.connect(carol).createGauge(asim2.address, false);
+      });
+
+      it("Should now create lock for users and vote in gauges", async function () {
+        let valueForLock = ethers.utils.parseUnits("1000", 18);
+        let duration = WEEK * 52;
+        await createLockForUser(valueForLock, duration, admin);
+        await createLockForUser(valueForLock, duration, alice);
+        await createLockForUser(valueForLock, duration, bob);
+        await createLockForUser(valueForLock, duration, carol);
+
+        let stakingPoolGauge = await voter.gauges(stakingPoolErc4626.address);
+        let eoaGuage = await voter.gauges(asim2.address);
+
+        stakingPoolGauge = await ethers.getContractAt(
+          "Gauge",
+          stakingPoolGauge
+        );
+        eoaGuage = await ethers.getContractAt("Gauge", eoaGuage);
+
+        // now vote on stakingPoolGuage
+        await voter
+          .connect(admin)
+          .vote(1, [stakingPoolErc4626.address], [10000]);
+        await voter
+          .connect(alice)
+          .vote(2, [stakingPoolErc4626.address, asim2.address], [10000, 5000]);
+        // await voter
+        //   .connect(bob)
+        //   .vote(3, [stakingPoolGauge.address], [30000]);
+        // await voter
+        //   .connect(carol)
+        //   .vote(4, [stakingPoolGauge.address], [40000]);
+
+        console.log(
+          await velo.balanceOf(stakingPoolGauge.address),
+          "before distribution------"
+        );
+        console.log(
+          await velo.balanceOf(asim2.address),
+          "eoa distribution------"
+        );
+        console.log(
+          await velo.balanceOf(eoaGuage.address),
+          "eoaGuage before distribution------"
+        );
+        await time.increase(WEEK);
+
+        await voter.distribute1(stakingPoolGauge.address);
+        await voter.distribute1(eoaGuage.address);
+
+        console.log(
+          await velo.balanceOf(stakingPoolGauge.address),
+          "after distribution------"
+        );
+        console.log(
+          await velo.balanceOf(asim2.address),
+          "eoa after distribution------"
+        );
+
+        console.log(
+          await velo.balanceOf(eoaGuage.address),
+          "eoaGuage after distribution------"
+        );
       });
     });
   });

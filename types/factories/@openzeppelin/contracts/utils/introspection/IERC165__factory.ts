@@ -10,7 +10,25 @@ import type {
 } from "../../../../../@openzeppelin/contracts/utils/introspection/IERC165";
 
 const _abi = [
-  "function supportsInterface(bytes4) view returns (bool)",
+  {
+    inputs: [
+      {
+        internalType: "bytes4",
+        name: "interfaceId",
+        type: "bytes4",
+      },
+    ],
+    name: "supportsInterface",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
 ] as const;
 
 export class IERC165__factory {
