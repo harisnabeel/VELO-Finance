@@ -12,7 +12,7 @@ import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 // import "hardhat/console.sol";
 
 /// @title Voting Escrow
-/// @notice veNFT implementation that escrows ERC-20 tokens in the form of an ERC-721 NFT
+/// @notice veXEQGT implementation that escrows ERC-20 tokens in the form of an ERC-721 NFT
 /// @notice Votes have a weight depending on time, so that users are committed to the future of (whatever they are voting for)
 /// @author Modified from Solidly (https://github.com/solidlyexchange/solidly/blob/master/contracts/ve.sol)
 /// @author Modified from Curve (https://github.com/curvefi/curve-dao-contracts/blob/master/contracts/VotingEscrow.vy)
@@ -99,7 +99,7 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
     EnumerableSet.UintSet private mySet;
 
     /// @notice Contract constructor
-    /// @param token_addr `VELO` token address
+    /// @param token_addr `XEQ` token address
     constructor(address token_addr, address art_proxy) {
         token = token_addr;
         voter = msg.sender;
@@ -138,8 +138,8 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
                              METADATA STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    string public constant name = "veNFT";
-    string public constant symbol = "veNFT";
+    string public constant name = "veXEQGT";
+    string public constant symbol = "veXEQGT";
     string public constant version = "1.0.0";
     uint8 public constant decimals = 18;
 

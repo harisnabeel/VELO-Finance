@@ -2,11 +2,11 @@
 pragma solidity 0.8.13;
 
 
-import "contracts/interfaces/IVelo.sol";
+import "contracts/interfaces/IXeq.sol";
 
-contract Velo is IVelo {
+contract Xeq is IXeq {
     string public constant name = "0xEquity";
-    string public constant symbol = "VELO";
+    string public constant symbol = "XEQ";
     uint8 public constant decimals = 18;
     uint256 public totalSupply = 0;
 
@@ -38,7 +38,7 @@ contract Velo is IVelo {
 
     // Initial mint: total 82M
     //  4M for "Genesis" pools
-    // 30M for liquid team allocation (40M excl init veNFT)
+    // 30M for liquid team allocation (40M excl init veXEQGT)
     // 48M for future partners
     function initialMint(address _recipient) external {
         require(msg.sender == minter && !initialMinted);

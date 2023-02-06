@@ -81,7 +81,7 @@ contract MintableBurnableERC20 is
 
     // Initial mint: total 82M
     //  4M for "Genesis" pools
-    // 30M for liquid team allocation (40M excl init veNFT)
+    // 30M for liquid team allocation (40M excl init veXEQGT)
     // 48M for future partners
     function initialMint(address _recipient) external onlyMinter {
         require(!initialMinted, "Already minted");

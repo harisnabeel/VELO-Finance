@@ -92,10 +92,10 @@
   },
   {
     "inputs": [],
-    "name": "_velo",
+    "name": "_voter",
     "outputs": [
       {
-        "internalType": "contract IVelo",
+        "internalType": "contract IVoter",
         "name": "",
         "type": "address"
       }
@@ -105,10 +105,10 @@
   },
   {
     "inputs": [],
-    "name": "_voter",
+    "name": "_xeq",
     "outputs": [
       {
-        "internalType": "contract IVoter",
+        "internalType": "contract IXeq",
         "name": "",
         "type": "address"
       }
